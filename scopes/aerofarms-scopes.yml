@@ -1,0 +1,27 @@
+generated: '2026-09-10'
+method: probed
+source: https://www.aerofarms.com/.well-known/oauth-authorization-server (RFC 8414, fetched 2026-09-10)
+docs: null
+description: >-
+  AeroFarms publishes no scope reference page — it publishes no developer documentation at all. The
+  single scope below is not derived from an OpenAPI oauth2 flow (none exists); it is read verbatim
+  from the scopes_supported array of the authorization-server metadata document the site itself
+  serves, and from the matching scopes_supported in its protected-resource metadata.
+authorization_server: https://www.aerofarms.com
+protected_resource: https://www.aerofarms.com/wp-json/mcp/mcp-oauth-server
+scope_count: 1
+scopes:
+- name: mcp
+  description: >-
+    Access to the Model Context Protocol server at /wp-json/mcp/mcp-oauth-server. The provider gives
+    no finer definition, and there is no second scope: authorization to this resource is all-or-nothing
+    at the protocol level. What a token actually permits inside the server is decided by the WordPress
+    capabilities of the identity behind it, which is not expressed in the scope vocabulary.
+  source: scopes_supported
+  evidence: https://www.aerofarms.com/.well-known/oauth-authorization-server
+granularity:
+  verdict: coarse
+  note: >-
+    One scope for one resource. An agent cannot request read-only access, and a consent screen cannot
+    tell a user which tools the grant covers. This is the WordPress MCP Adapter default rather than a
+    choice AeroFarms documented.

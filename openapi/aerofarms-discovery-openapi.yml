@@ -1,0 +1,193 @@
+openapi: 3.2.0
+info:
+  title: AeroFarms Discovery API
+  version: v1
+  description: 'Public, unauthenticated discovery surface for the AeroFarms REST API — the route index that enumerates every
+    registered route and namespace, plus the registered content types, taxonomies and post statuses. This is the machine-readable
+    contract the rest of this profile was derived from: 917 routes across 46 namespaces at capture.'
+  contact:
+    name: AeroFarms
+    url: https://www.aerofarms.com/contact/
+    email: info@aerofarms.com
+  x-derived-from: https://www.aerofarms.com/wp-json/ route index + per-route HTTP OPTIONS schema documents
+  x-derived-on: '2026-09-10'
+  x-api-evangelist-note: Third-party profile. AeroFarms publishes no developer program; this documents the anonymously readable
+    REST surface behind www.aerofarms.com. Every path, parameter and schema here was read from the server's own published
+    route index and OPTIONS documents on 2026-09-10 — nothing is invented.
+servers:
+- url: https://www.aerofarms.com/wp-json
+  description: AeroFarms WordPress REST API
+tags:
+- name: Discovery
+  description: Route index, content types, taxonomies and statuses.
+paths:
+  /:
+    get:
+      operationId: getRouteIndex
+      summary: Retrieve the route index
+      description: 'Retrieve the WordPress REST API root document: site name and description, the registered namespaces, and
+        every route with its methods and arguments. 917 routes across 46 namespaces at capture.'
+      tags:
+      - Discovery
+      responses:
+        '200':
+          description: Retrieve the route index
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: Invalid parameter(s) — rest_invalid_param.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: No such route or resource — rest_no_route / rest_*_invalid_id.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      parameters:
+      - name: context
+        in: query
+        schema:
+          default: view
+  /wp/v2/types:
+    get:
+      operationId: listContentTypes
+      summary: List content types
+      description: Retrieve the registered post types and their REST base paths.
+      tags:
+      - Discovery
+      responses:
+        '200':
+          description: List content types
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: Invalid parameter(s) — rest_invalid_param.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: No such route or resource — rest_no_route / rest_*_invalid_id.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      parameters:
+      - name: context
+        in: query
+        schema:
+          type: string
+          enum:
+          - view
+          - embed
+          - edit
+          default: view
+        description: Scope under which the request is made; determines fields present in response.
+  /wp/v2/taxonomies:
+    get:
+      operationId: listTaxonomies
+      summary: List taxonomies
+      description: Retrieve the registered taxonomies and the content types they apply to.
+      tags:
+      - Discovery
+      responses:
+        '200':
+          description: List taxonomies
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: Invalid parameter(s) — rest_invalid_param.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: No such route or resource — rest_no_route / rest_*_invalid_id.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      parameters:
+      - name: context
+        in: query
+        schema:
+          type: string
+          enum:
+          - view
+          - embed
+          - edit
+          default: view
+        description: Scope under which the request is made; determines fields present in response.
+      - name: type
+        in: query
+        schema:
+          type: string
+        description: Limit results to taxonomies associated with a specific post type.
+  /wp/v2/statuses:
+    get:
+      operationId: listPostStatuses
+      summary: List post statuses
+      description: Retrieve the registered post statuses and which are publicly queryable.
+      tags:
+      - Discovery
+      responses:
+        '200':
+          description: List post statuses
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: Invalid parameter(s) — rest_invalid_param.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: No such route or resource — rest_no_route / rest_*_invalid_id.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      parameters:
+      - name: context
+        in: query
+        schema:
+          type: string
+          enum:
+          - view
+          - embed
+          - edit
+          default: view
+        description: Scope under which the request is made; determines fields present in response.
+components:
+  schemas:
+    Error:
+      title: WP REST error
+      type: object
+      description: The WordPress REST error envelope returned on every non-2xx response, observed live 2026-09-10.
+      properties:
+        code:
+          type: string
+          description: Machine-readable error code, e.g. rest_forbidden, rest_no_route, rest_invalid_param.
+        message:
+          type: string
+          description: Human-readable message.
+        data:
+          type: object
+          properties:
+            status:
+              type: integer
+              description: HTTP status code repeated in the body.
+            params:
+              type: object
+              description: Per-parameter validation messages, on rest_invalid_param.

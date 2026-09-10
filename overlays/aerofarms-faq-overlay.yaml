@@ -1,0 +1,43 @@
+overlay: 1.0.0
+info:
+  title: API Evangelist enhancements — AeroFarms FAQ API
+  version: 1.0.0
+  x-generated: '2026-09-10'
+  x-method: generated
+  x-source: openapi/aerofarms-faq-openapi.yml
+  description: Non-destructive annotations API Evangelist adds on top of the derived AeroFarms contract. The underlying OpenAPI
+    is never mutated; everything here is our reading of the surface, marked as ours.
+extends: openapi/aerofarms-faq-openapi.yml
+actions:
+- target: $.info
+  update:
+    x-api-evangelist-profile: https://apis.io/provider/aerofarms/
+    x-api-evangelist-repository: https://github.com/api-evangelist/aerofarms
+    x-provider-published: false
+    x-derivation: Derived by API Evangelist from https://www.aerofarms.com/wp-json/ route index + per-route HTTP OPTIONS schema
+      documents on 2026-09-10. AeroFarms publishes no OpenAPI.
+- target: $.info
+  update:
+    x-artifacts:
+      authentication: authentication/aerofarms-authentication.yml
+      conventions: conventions/aerofarms-conventions.yml
+      errors: errors/aerofarms-problem-types.yml
+      lifecycle: lifecycle/aerofarms-lifecycle.yml
+      rate_limits: rate-limits/aerofarms-rate-limits.yml
+      conformance: conformance/aerofarms-conformance.yml
+      data_model: data-model/aerofarms-data-model.yml
+- target: $.paths.*.get
+  update:
+    x-access: anonymous
+    x-agentic-access:
+      action_class: read
+      consequence: none
+      reversible: na
+      token: none
+      escalation: none
+- target: $.paths.*.get
+  update:
+    x-rate-limit: No published limit and no runtime signal — see rate-limits/aerofarms-rate-limits.yml. Use a polite fixed
+      rate.
+    x-response-validation: 'Assert content-type application/json before parsing: at least one route on this host answers 200
+      with an HTML redirect target instead of JSON.'

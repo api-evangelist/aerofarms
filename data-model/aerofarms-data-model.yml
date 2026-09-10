@@ -1,0 +1,161 @@
+generated: '2026-09-10'
+method: derived
+source: >-
+  openapi/ (9 specs derived from https://www.aerofarms.com/wp-json/ route index + OPTIONS schema
+  documents), plus live responses and the _links / _embedded relations they carry.
+description: >-
+  The entity graph behind www.aerofarms.com as the public API exposes it. Relationships are read from
+  the id-reference fields and the HAL-flavored _links each resource returns — nothing is inferred
+  from naming alone. Counts are live totals at capture (2026-09-10), taken from X-WP-Total.
+
+id_scheme:
+  style: integer
+  note: >-
+    Every entity is keyed by a site-scoped auto-increment integer. There are no prefixed or typed
+    ids, so an id is meaningless without knowing which collection it came from — 20468 is both a
+    wp/v2 product and a wc/store/v1 product because they are two projections of the same row, but
+    30449 as a post id and 30449 as a media id would be different objects.
+  cross_surface: >-
+    wp/v2/product and wc/store/v1/products share the same integer key. That is the one join between
+    the content surface and the commerce surface.
+
+entities:
+
+- name: Post
+  collection: /wp/v2/posts
+  count: 289
+  description: A dated AeroFarms news or press item.
+  key: id
+  relationships:
+  - {type: belongs_to, target: User, via: author, note: 'Author ids resolve only through _links; /wp/v2/users is 401-gated.'}
+  - {type: has_many, target: Category, via: categories}
+  - {type: has_many, target: Tag, via: tags}
+  - {type: has_one, target: MediaItem, via: featured_media}
+  - {type: has_many, target: Comment, via: '_links.replies'}
+
+- name: Comment
+  collection: /wp/v2/comments
+  count: 16
+  description: An approved reader comment, including AeroFarms' own replies.
+  key: id
+  relationships:
+  - {type: belongs_to, target: Post, via: post}
+  - {type: belongs_to, target: Comment, via: parent, note: 'Self-reference — threaded replies.'}
+
+- name: Page
+  collection: /wp/v2/pages
+  count: 56
+  description: A static marketing or policy page — About Us, How We Grow, Careers, Terms, Privacy.
+  key: id
+  relationships:
+  - {type: belongs_to, target: Page, via: parent, note: 'Self-reference — pages are hierarchical.'}
+  - {type: has_one, target: MediaItem, via: featured_media}
+
+- name: Product
+  collection: /wp/v2/product
+  count: 8
+  description: >-
+    A microgreens product as a WordPress content object — micro broccoli, micro arugula, micro wasabi
+    mustard, micro rainbow mix, micro spicy mix and the rest of the FlavorSpectrum range.
+  key: id
+  relationships:
+  - {type: has_many, target: ProductCategory, via: product_cat}
+  - {type: has_one, target: MediaItem, via: featured_media}
+  - {type: has_one, target: StoreProduct, via: id, note: 'Same integer key on the commerce surface.'}
+
+- name: StoreProduct
+  collection: /wc/store/v1/products
+  count: 8
+  description: >-
+    The commerce projection of the same eight products — images, attributes, stock status, facet data
+    and a prices object (all zero, in an unconfigured GBP default).
+  key: id
+  relationships:
+  - {type: has_many, target: StoreProductCategory, via: categories}
+  - {type: has_one, target: Product, via: id}
+
+- name: ProductCategory
+  collection: /wp/v2/product_cat
+  count: 3
+  key: id
+  relationships:
+  - {type: belongs_to, target: ProductCategory, via: parent}
+  - {type: has_many, target: Product, via: count}
+
+- name: StoreProductCategory
+  collection: /wc/store/v1/products/categories
+  count: 1
+  description: 'The single storefront category, "microgreens", carrying all 8 products.'
+  key: id
+  relationships:
+  - {type: has_many, target: StoreProduct, via: count}
+
+- name: Faq
+  collection: /wp/v2/ufaq
+  count: 18
+  description: One question-and-answer entry in the AeroFarms FAQ knowledge base.
+  key: id
+  relationships:
+  - {type: has_many, target: FaqCategory, via: ufaq-category}
+
+- name: FaqCategory
+  collection: /wp/v2/ufaq-category
+  count: 8
+  key: id
+  relationships:
+  - {type: has_many, target: Faq, via: count}
+
+- name: Category
+  collection: /wp/v2/categories
+  count: 9
+  description: 'Editorial categories on the news archive — Awards, Press, Recipes and similar.'
+  key: id
+  relationships:
+  - {type: belongs_to, target: Category, via: parent}
+  - {type: has_many, target: Post, via: count}
+
+- name: Tag
+  collection: /wp/v2/tags
+  count: 455
+  key: id
+  relationships:
+  - {type: has_many, target: Post, via: count}
+
+- name: MediaItem
+  collection: /wp/v2/media
+  count: 5605
+  description: >-
+    An image or document with its generated size variants. The largest entity on the surface by an
+    order of magnitude.
+  key: id
+  relationships:
+  - {type: belongs_to, target: Post, via: post, note: 'The attachment parent, when there is one.'}
+  reachability: >-
+    Collection only. The single-item route /wp/v2/media/{id} is captured by a site redirect and never
+    returns an attachment — see errors/aerofarms-problem-types.yml.
+
+- name: SearchResult
+  collection: /wp/v2/search
+  count: 371
+  description: >-
+    A lightweight pointer — id, title, url, type, subtype — into Post, Page, Product or Faq. Not an
+    entity of its own; the projection that makes the graph traversable from a keyword.
+  key: id
+  relationships:
+  - {type: belongs_to, target: Post, via: 'id + subtype=post'}
+  - {type: belongs_to, target: Page, via: 'id + subtype=page'}
+  - {type: belongs_to, target: Product, via: 'id + subtype=product'}
+  - {type: belongs_to, target: Faq, via: 'id + subtype=ufaq'}
+
+- name: User
+  collection: /wp/v2/users
+  count: null
+  description: 'Author accounts. 401 rest_user_cannot_view for anonymous callers — present in the graph, not readable.'
+  key: id
+  readable: false
+
+not_modelled:
+  note: >-
+    Recipes are a visible content type on the website (www.aerofarms.com/recipe/…, and the llms.txt
+    lists five) but no `recipe` route is registered in the REST index, so they are not reachable
+    through this API and are deliberately absent from this model rather than guessed at.

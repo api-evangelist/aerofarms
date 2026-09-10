@@ -1,0 +1,30 @@
+generated: '2026-09-10'
+method: generated
+source: >-
+  openapi/ (9 specs, 25 operations derived from the AeroFarms route index), plus
+  conventions/aerofarms-conventions.yml and errors/aerofarms-problem-types.yml for the rules each
+  skill enforces.
+description: >-
+  Packaged Agent Skills for the anonymously readable AeroFarms REST surface. Every operationId named
+  in these skills exists in openapi/ — they were checked against the specs, not written from memory.
+  All three skills are read-only, because the entire public surface is read-only. No skill is written
+  for the MCP server: its tool list is auth-gated, and a skill for tools nobody can enumerate would
+  be fiction.
+skills:
+- name: aerofarms-track-news
+  file: aerofarms-track-news.md
+  api: aerofarms:aerofarms-news-api
+  summary: Monitor AeroFarms press releases and announcements, incrementally, by modified_after.
+  operations: [listNewsPosts, getNewsPost, listComments, listCategories, listTags, searchSiteContent]
+- name: aerofarms-read-product-catalog
+  file: aerofarms-read-product-catalog.md
+  api: aerofarms:aerofarms-products-api
+  summary: >-
+    Read the eight-product microgreens catalog across both the content and WooCommerce projections,
+    with an explicit warning not to read the zeroed GBP prices as prices.
+  operations: [listProducts, getProduct, listProductCategories, listStoreProducts, getStoreProduct, listStoreProductCategories, getStoreCollectionData]
+- name: aerofarms-answer-from-published-content
+  file: aerofarms-answer-from-published-content.md
+  api: aerofarms:aerofarms-faq-api
+  summary: Answer questions about AeroFarms from its own FAQ, pages and search index, with attribution.
+  operations: [searchSiteContent, listFaqs, getFaq, listFaqCategories, listPages, getPage]

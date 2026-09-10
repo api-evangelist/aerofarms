@@ -64,5 +64,48 @@
 > Full detail: **[Where this data comes from](https://apievangelist.com/about/where-our-data-comes-from)**
 <!-- API-EVANGELIST-PROVENANCE:END -->
 
-AeroFarms is a company surfaced via the API Evangelist harvest backlog (source: secondary-market) and added to the network as a stub for full-pipeline profiling.
-- https://www.nasdaqprivatemarket.com/
+AeroFarms is an indoor vertical farming company founded in 2004 and headquartered in Newark, New
+Jersey. It grows leafy greens and nutrient-dense microgreens — micro broccoli, micro arugula, micro
+wasabi mustard and the FlavorSpectrum blends — aeroponically, without sun or soil, under LED light
+recipes driven by its proprietary agSTACK PLC/SCADA control stack. It is a Certified B Corporation
+and was acquired by an affiliate of Palm Ventures in June 2026.
+
+## What this profile found
+
+AeroFarms is a produce grower, not a software vendor. It publishes **no developer portal, no API
+documentation, no SDKs, no pricing and no API product**, and its GitHub organization
+([AeroFarms](https://github.com/AeroFarms)) has zero public repositories. `api.aerofarms.com`,
+`docs.aerofarms.com`, `developers.aerofarms.com` and `status.aerofarms.com` are all NXDOMAIN.
+
+It nevertheless has a real, live, machine-readable surface, and it is more interesting than that
+summary suggests:
+
+- **A hosted MCP server.** `https://www.aerofarms.com/wp-json/mcp/mcp-oauth-server` answers JSON-RPC
+  and defends itself with a textbook OAuth 2.1 challenge — RFC 9728 protected-resource metadata named
+  in `WWW-Authenticate`, RFC 8414 authorization-server metadata served at the canonical path, PKCE
+  S256 required, public clients via client_id metadata documents, one scope (`mcp`). `tools/list`
+  returns 401, so the tool set is not enumerated here and no candidate list is invented for it.
+- **An anonymous, read-only REST API** — 917 registered routes across 46 namespaces, of which the
+  publicly readable part covers 289 news posts, 56 pages, 8 microgreens products, 18 FAQ answers,
+  5,605 media attachments, 455 tags and a cross-content search index of 371 objects.
+- **A provider-published `llms.txt`** (Yoast-generated), saved verbatim in `llms/`.
+
+## What is in this repository
+
+Nine OpenAPI documents in `openapi/` (25 operations) derived from the site's **own** published route
+index and per-route `OPTIONS` schema documents — AeroFarms publishes no OpenAPI, and nothing in them
+is invented. Alongside them: `mcp/`, `well-known/` (two real OAuth discovery documents, saved
+verbatim), `authentication/`, `scopes/`, `conformance/`, `conventions/`, `errors/`, `lifecycle/`,
+`data-model/`, `plans/`, `rate-limits/`, `security/`, `overlays/`, `llms/` and three packaged agent
+skills in `skills/`.
+
+Three findings a consumer should read before calling anything:
+
+1. `/wp-json/wp/v2/media/{id}` is captured by a site redirect rule and answers **HTTP 200 with an
+   HTML marketing page** instead of the attachment. Assert `Content-Type` on every response.
+2. WooCommerce runs here as a catalog, not a shop: every product returns a price of `0` in an
+   unconfigured `GBP` default currency. Do not read it as a price list.
+3. Nothing on this surface is committed to. It exists as a by-product of running a WordPress site,
+   so it can change on any plugin update, with no changelog and no channel to announce it on.
+
+- https://www.aerofarms.com/

@@ -1,0 +1,183 @@
+generated: '2026-09-10'
+method: derived
+source: openapi/ (9 specs, 25 operations) + mcp/aerofarms-mcp.yml (probed 2026-09-10)
+description: 'AeroFarms has BOTH a real MCP server and a real (derived) OpenAPI surface, which is exactly the condition
+  this crosswalk exists for — but the binding cannot be established, and saying so precisely is the finding. The
+  MCP endpoint at /wp-json/mcp/mcp-oauth-server returns HTTP 401 on tools/list, and AeroFarms publishes no tool
+  list anywhere else, so there are no tool names on one side of the mapping. Every row below is therefore rest_only.
+  This file is deliberately empty of guesses: a name-and-semantics mapping, which the pipeline allows when a live
+  schema is gated, still needs published tool NAMES to map, and there are none.'
+surfaces:
+  openapi:
+    present: true
+    count: 9
+    operations: 25
+    note: Derived from the site's own wp-json route index and OPTIONS schema documents. Anonymous, read-only, ungated.
+  graphql:
+    present: false
+    note: No /graphql surface; https://www.aerofarms.com/graphql returns 404.
+  mcp:
+    present: true
+    url: https://www.aerofarms.com/wp-json/mcp/mcp-oauth-server
+    gated: true
+    gate: OAuth 2.1 bearer, scope mcp — HTTP 401 mcp_unauthorized on anonymous tools/list
+crosswalk: []
+mcp_only: []
+rest_only:
+- operationId: getRouteIndex
+  spec: openapi/aerofarms-discovery-openapi.yml
+  method: GET
+  path: /
+  reason: 'No MCP tool can be bound to it: the MCP server''s tools/list is auth-gated, so no tool names exist to
+    map.'
+- operationId: listContentTypes
+  spec: openapi/aerofarms-discovery-openapi.yml
+  method: GET
+  path: /wp/v2/types
+  reason: 'No MCP tool can be bound to it: the MCP server''s tools/list is auth-gated, so no tool names exist to
+    map.'
+- operationId: listTaxonomies
+  spec: openapi/aerofarms-discovery-openapi.yml
+  method: GET
+  path: /wp/v2/taxonomies
+  reason: 'No MCP tool can be bound to it: the MCP server''s tools/list is auth-gated, so no tool names exist to
+    map.'
+- operationId: listPostStatuses
+  spec: openapi/aerofarms-discovery-openapi.yml
+  method: GET
+  path: /wp/v2/statuses
+  reason: 'No MCP tool can be bound to it: the MCP server''s tools/list is auth-gated, so no tool names exist to
+    map.'
+- operationId: listFaqs
+  spec: openapi/aerofarms-faq-openapi.yml
+  method: GET
+  path: /wp/v2/ufaq
+  reason: 'No MCP tool can be bound to it: the MCP server''s tools/list is auth-gated, so no tool names exist to
+    map.'
+- operationId: getFaq
+  spec: openapi/aerofarms-faq-openapi.yml
+  method: GET
+  path: /wp/v2/ufaq/{id}
+  reason: 'No MCP tool can be bound to it: the MCP server''s tools/list is auth-gated, so no tool names exist to
+    map.'
+- operationId: listFaqCategories
+  spec: openapi/aerofarms-faq-openapi.yml
+  method: GET
+  path: /wp/v2/ufaq-category
+  reason: 'No MCP tool can be bound to it: the MCP server''s tools/list is auth-gated, so no tool names exist to
+    map.'
+- operationId: listMedia
+  spec: openapi/aerofarms-media-openapi.yml
+  method: GET
+  path: /wp/v2/media
+  reason: 'No MCP tool can be bound to it: the MCP server''s tools/list is auth-gated, so no tool names exist to
+    map.'
+- operationId: listNewsPosts
+  spec: openapi/aerofarms-news-openapi.yml
+  method: GET
+  path: /wp/v2/posts
+  reason: 'No MCP tool can be bound to it: the MCP server''s tools/list is auth-gated, so no tool names exist to
+    map.'
+- operationId: getNewsPost
+  spec: openapi/aerofarms-news-openapi.yml
+  method: GET
+  path: /wp/v2/posts/{id}
+  reason: 'No MCP tool can be bound to it: the MCP server''s tools/list is auth-gated, so no tool names exist to
+    map.'
+- operationId: listComments
+  spec: openapi/aerofarms-news-openapi.yml
+  method: GET
+  path: /wp/v2/comments
+  reason: 'No MCP tool can be bound to it: the MCP server''s tools/list is auth-gated, so no tool names exist to
+    map.'
+- operationId: listPages
+  spec: openapi/aerofarms-pages-openapi.yml
+  method: GET
+  path: /wp/v2/pages
+  reason: 'No MCP tool can be bound to it: the MCP server''s tools/list is auth-gated, so no tool names exist to
+    map.'
+- operationId: getPage
+  spec: openapi/aerofarms-pages-openapi.yml
+  method: GET
+  path: /wp/v2/pages/{id}
+  reason: 'No MCP tool can be bound to it: the MCP server''s tools/list is auth-gated, so no tool names exist to
+    map.'
+- operationId: listProducts
+  spec: openapi/aerofarms-products-openapi.yml
+  method: GET
+  path: /wp/v2/product
+  reason: 'No MCP tool can be bound to it: the MCP server''s tools/list is auth-gated, so no tool names exist to
+    map.'
+- operationId: getProduct
+  spec: openapi/aerofarms-products-openapi.yml
+  method: GET
+  path: /wp/v2/product/{id}
+  reason: 'No MCP tool can be bound to it: the MCP server''s tools/list is auth-gated, so no tool names exist to
+    map.'
+- operationId: listProductCategories
+  spec: openapi/aerofarms-products-openapi.yml
+  method: GET
+  path: /wp/v2/product_cat
+  reason: 'No MCP tool can be bound to it: the MCP server''s tools/list is auth-gated, so no tool names exist to
+    map.'
+- operationId: searchSiteContent
+  spec: openapi/aerofarms-search-openapi.yml
+  method: GET
+  path: /wp/v2/search
+  reason: 'No MCP tool can be bound to it: the MCP server''s tools/list is auth-gated, so no tool names exist to
+    map.'
+- operationId: listStoreProducts
+  spec: openapi/aerofarms-store-openapi.yml
+  method: GET
+  path: /wc/store/v1/products
+  reason: 'No MCP tool can be bound to it: the MCP server''s tools/list is auth-gated, so no tool names exist to
+    map.'
+- operationId: getStoreProduct
+  spec: openapi/aerofarms-store-openapi.yml
+  method: GET
+  path: /wc/store/v1/products/{id}
+  reason: 'No MCP tool can be bound to it: the MCP server''s tools/list is auth-gated, so no tool names exist to
+    map.'
+- operationId: listStoreProductCategories
+  spec: openapi/aerofarms-store-openapi.yml
+  method: GET
+  path: /wc/store/v1/products/categories
+  reason: 'No MCP tool can be bound to it: the MCP server''s tools/list is auth-gated, so no tool names exist to
+    map.'
+- operationId: getStoreCollectionData
+  spec: openapi/aerofarms-store-openapi.yml
+  method: GET
+  path: /wc/store/v1/products/collection-data
+  reason: 'No MCP tool can be bound to it: the MCP server''s tools/list is auth-gated, so no tool names exist to
+    map.'
+- operationId: getCart
+  spec: openapi/aerofarms-store-openapi.yml
+  method: GET
+  path: /wc/store/v1/cart
+  reason: 'No MCP tool can be bound to it: the MCP server''s tools/list is auth-gated, so no tool names exist to
+    map.'
+- operationId: listCategories
+  spec: openapi/aerofarms-taxonomy-openapi.yml
+  method: GET
+  path: /wp/v2/categories
+  reason: 'No MCP tool can be bound to it: the MCP server''s tools/list is auth-gated, so no tool names exist to
+    map.'
+- operationId: getCategory
+  spec: openapi/aerofarms-taxonomy-openapi.yml
+  method: GET
+  path: /wp/v2/categories/{id}
+  reason: 'No MCP tool can be bound to it: the MCP server''s tools/list is auth-gated, so no tool names exist to
+    map.'
+- operationId: listTags
+  spec: openapi/aerofarms-taxonomy-openapi.yml
+  method: GET
+  path: /wp/v2/tags
+  reason: 'No MCP tool can be bound to it: the MCP server''s tools/list is auth-gated, so no tool names exist to
+    map.'
+coverage:
+  tools_total: null
+  tools_mapped: 0
+  rest_operations: 25
+  rest_mapped: 0
+  rest_unmapped: 25
+  note: tools_total is null, not zero — the server has tools, they are simply unreadable without credentials.

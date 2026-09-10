@@ -1,0 +1,80 @@
+generated: '2026-09-10'
+method: probed
+source: >-
+  https://www.aerofarms.com/wp-json/ route index (2026-09-10), live probes of candidate status and
+  policy hosts, and openapi/ derived from the route index.
+description: >-
+  AeroFarms publishes no API lifecycle policy of any kind, because it publishes no API program. What
+  follows is the lifecycle posture the surface actually has, and an explicit record of each policy
+  document that does not exist — the absences are the finding, and they are recorded rather than
+  papered over.
+
+versioning:
+  scheme: path-namespace
+  current:
+  - namespace: wp/v2
+    role: WordPress core content API — the news, pages, products, FAQ, media, taxonomy and search surface.
+  - namespace: wc/store/v1
+    role: WooCommerce Store API — the public storefront catalog and cart.
+  - namespace: wc/v3
+    role: WooCommerce admin API (credentialed; not publicly reachable).
+  breaking_change_policy: none published
+  note: >-
+    Versioning is inherited from the WordPress and WooCommerce plugins, not authored by AeroFarms.
+    Older namespaces stay mounted (wc/v1 and wc/v2 are both still registered alongside wc/v3), so
+    removal is not the usual failure mode here — silent behaviour change on a plugin update is.
+
+deprecation:
+  policy_published: false
+  sunset_header: false
+  deprecation_header: false
+  rfc8594: false
+  deprecated_operations: []
+  note: >-
+    No Deprecation or Sunset header was returned on any response, and no deprecation policy page
+    exists. No apis.yml Deprecation pointer is emitted.
+
+status_page:
+  published: false
+  probed:
+  - {url: 'https://status.aerofarms.com', result: NXDOMAIN}
+  note: >-
+    No status page, no uptime history, no incident feed. No apis.yml StatusPage pointer is emitted.
+
+sla:
+  published: false
+  note: >-
+    No SLA, no support tier, no uptime commitment. The only support channel is the general contact
+    form at https://www.aerofarms.com/contact/.
+
+changelog:
+  api_changelog_published: false
+  note: >-
+    There is no API changelog. The nearest dated stream is the company news archive
+    (https://www.aerofarms.com/news/, 289 posts, readable through wp/v2/posts), which is corporate
+    press rather than a release log. No apis.yml ChangeLog pointer is emitted, because pointing a
+    ChangeLog check at a press feed would be a false claim.
+
+surface_stability:
+  verdict: incidental
+  detail: >-
+    This API exists as a by-product of running a WordPress site with WooCommerce, Yoast, an MCP
+    adapter and about forty other plugins. Nobody at AeroFarms has committed to it, so it can change
+    or disappear on any plugin update or site redesign with no notice and no channel to announce it
+    on. One route is already broken this way: /wp-json/wp/v2/media/{id} is captured by a Redirection
+    rule and answers with a marketing page instead of the attachment (see
+    errors/aerofarms-problem-types.yml).
+  consumer_advice: >-
+    Re-read GET /wp-json/ before each run — it is the only authoritative statement of what exists —
+    and assert content-type on every response.
+
+company_events:
+- date: '2026-06-11'
+  event: >-
+    AeroFarms announced it had been acquired by an affiliate of Palm Ventures. Recorded because
+    ownership change is the most likely trigger for a site rebuild that would take this surface with it.
+  source: https://www.aerofarms.com/aerofarms-acquired-by-an-affiliate-of-palm-ventures/
+- date: '2026-08-26'
+  event: >-
+    Most recent post in the news archive at capture — the surface is live and actively updated.
+  source: https://www.aerofarms.com/aerofarms-adds-micro-arugula-and-micro-broccoli/

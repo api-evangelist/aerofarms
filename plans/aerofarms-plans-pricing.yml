@@ -1,0 +1,26 @@
+generated: '2026-09-10'
+method: searched
+source: >-
+  https://www.aerofarms.com/ and its 56-page sitemap (read through /wp-json/wp/v2/pages), searched
+  2026-09-10 for pricing, plans, developer or API commercial terms.
+plan_count: 0
+currency: null
+description: >-
+  AeroFarms sells microgreens, not API access. There is no API pricing page, no developer plan, no
+  free tier, no contact-sales gate for API access, and no metering of any kind — because there is no
+  API product to price. The public REST surface described in this repo is free and anonymous simply
+  because it is the website's own content API, not because AeroFarms chose to give it away.
+plans: []
+consumer_pricing:
+  published: false
+  note: >-
+    Nor is there a retail price list. The WooCommerce Store API carries a prices object on each of the
+    8 products, but every one reads price "0" / regular_price "0" with currency_code GBP — the
+    unconfigured WooCommerce default currency for a US company that sells through grocery retail.
+    WooCommerce is running here as a product catalog for the Our Microgreens pages, not as a store.
+    Probed 2026-09-10 at /wp-json/wc/store/v1/products?_fields=id,name,prices.
+  endpoint: https://www.aerofarms.com/wp-json/wc/store/v1/products
+evidence:
+- {url: 'https://www.aerofarms.com/', status: 200, note: 'No pricing or developer link in navigation.'}
+- {url: 'https://www.aerofarms.com/wp-json/wp/v2/pages?per_page=100', status: 200, note: '56 pages; none is a pricing or developer page.'}
+- {url: 'https://developers.aerofarms.com/', status: 0, note: NXDOMAIN}

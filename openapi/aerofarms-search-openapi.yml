@@ -1,0 +1,202 @@
+openapi: 3.2.0
+info:
+  title: AeroFarms Search API
+  version: v2
+  description: Public, unauthenticated cross-content search over www.aerofarms.com — news posts, pages, products and FAQ entries
+    — returning lightweight id / title / url / type / subtype records. Verified live at 371 searchable objects on 2026-09-10.
+  contact:
+    name: AeroFarms
+    url: https://www.aerofarms.com/contact/
+    email: info@aerofarms.com
+  x-derived-from: https://www.aerofarms.com/wp-json/ route index + per-route HTTP OPTIONS schema documents
+  x-derived-on: '2026-09-10'
+  x-api-evangelist-note: Third-party profile. AeroFarms publishes no developer program; this documents the anonymously readable
+    REST surface behind www.aerofarms.com. Every path, parameter and schema here was read from the server's own published
+    route index and OPTIONS documents on 2026-09-10 — nothing is invented.
+servers:
+- url: https://www.aerofarms.com/wp-json
+  description: AeroFarms WordPress REST API
+tags:
+- name: Search
+  description: Cross-content search over the AeroFarms website.
+paths:
+  /wp/v2/search:
+    get:
+      operationId: searchSiteContent
+      summary: Search site content
+      description: Search across AeroFarms news posts, pages, products and FAQ entries. 371 searchable objects at capture.
+      tags:
+      - Search
+      responses:
+        '200':
+          description: Search site content
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SearchResult'
+          headers:
+            X-WP-Total:
+              description: Total number of records matching the query.
+              schema:
+                type: integer
+            X-WP-TotalPages:
+              description: Total number of pages available at the current per_page.
+              schema:
+                type: integer
+            Link:
+              description: RFC 8288 pagination links (rel="next" / rel="prev").
+              schema:
+                type: string
+        '400':
+          description: Invalid parameter(s) — rest_invalid_param.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: No such route or resource — rest_no_route / rest_*_invalid_id.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      parameters:
+      - name: context
+        in: query
+        schema:
+          type: string
+          enum:
+          - view
+          - embed
+          default: view
+        description: Scope under which the request is made; determines fields present in response.
+      - name: exclude
+        in: query
+        schema:
+          type: array
+          default: []
+          items:
+            type: integer
+        description: Ensure result set excludes specific IDs.
+      - name: include
+        in: query
+        schema:
+          type: array
+          default: []
+          items:
+            type: integer
+        description: Limit result set to specific IDs.
+      - name: page
+        in: query
+        schema:
+          type: integer
+          default: 1
+          minimum: 1
+        description: Current page of the collection.
+      - name: per_page
+        in: query
+        schema:
+          type: integer
+          default: 10
+          minimum: 1
+          maximum: 100
+        description: Maximum number of items to be returned in result set.
+      - name: search
+        in: query
+        schema:
+          type: string
+        description: Limit results to those matching a string.
+      - name: subtype
+        in: query
+        schema:
+          type: array
+          default: any
+          items:
+            enum:
+            - post
+            - page
+            - product
+            - ufaq
+            - astra-advanced-hook
+            - category
+            - post_tag
+            - product_brand
+            - product_cat
+            - product_tag
+            - ufaq-category
+            - ufaq-tag
+            - any
+            type: string
+        description: Limit results to items of one or more object subtypes.
+      - name: type
+        in: query
+        schema:
+          type: string
+          enum:
+          - post
+          - term
+          - post-format
+          default: post
+        description: Limit results to items of an object type.
+components:
+  schemas:
+    Error:
+      title: WP REST error
+      type: object
+      description: The WordPress REST error envelope returned on every non-2xx response, observed live 2026-09-10.
+      properties:
+        code:
+          type: string
+          description: Machine-readable error code, e.g. rest_forbidden, rest_no_route, rest_invalid_param.
+        message:
+          type: string
+          description: Human-readable message.
+        data:
+          type: object
+          properties:
+            status:
+              type: integer
+              description: HTTP status code repeated in the body.
+            params:
+              type: object
+              description: Per-parameter validation messages, on rest_invalid_param.
+    SearchResult:
+      title: search-result
+      type: object
+      properties:
+        id:
+          description: Unique identifier for the object.
+          type:
+          - integer
+          - string
+        title:
+          description: The title for the object.
+          type: string
+        url:
+          description: URL to the object.
+          type: string
+          format: uri
+        type:
+          description: Object type.
+          type: string
+          enum:
+          - post
+          - term
+          - post-format
+        subtype:
+          description: Object subtype.
+          type: string
+          enum:
+          - post
+          - page
+          - product
+          - ufaq
+          - astra-advanced-hook
+          - category
+          - post_tag
+          - product_brand
+          - product_cat
+          - product_tag
+          - ufaq-category
+          - ufaq-tag

@@ -1,0 +1,83 @@
+generated: '2026-09-10'
+method: probed
+source: >-
+  Live probes of https://www.aerofarms.com/wp-json/* on 2026-09-10, plus the provider-served
+  /.well-known/oauth-authorization-server and /.well-known/oauth-protected-resource documents.
+description: >-
+  AeroFarms publishes no authentication documentation, because it publishes no developer program.
+  Everything here was established by calling the surface and reading the two OAuth discovery
+  documents the site really serves. The surface splits cleanly in three: an anonymous read tier that
+  needs no credential at all, an OAuth 2.1 tier that guards the MCP server, and an ordinary WordPress
+  session tier that guards everything else.
+
+tiers:
+
+- name: anonymous-read
+  applies_to: >-
+    wp/v2 posts, pages, product, product_cat, categories, tags, ufaq, ufaq-category, media, search,
+    comments, types, taxonomies, statuses; wc/store/v1 products, product categories, collection-data
+    and cart; the wp-json route index.
+  credential: none
+  verified: >-
+    Every route above returned HTTP 200 with real data on 2026-09-10 with no Authorization header and
+    no cookie. The product collection answers `Allow: GET` and returns X-WP-Total.
+  write_access: >-
+    None. POST/PUT/DELETE are registered on many of these routes but every one of them is capability
+    gated; an anonymous caller gets 401 rest_forbidden. The public contract is read-only.
+
+- name: oauth2-mcp
+  applies_to: https://www.aerofarms.com/wp-json/mcp/mcp-oauth-server
+  credential: OAuth 2.1 bearer token, scope `mcp`
+  discovery:
+    protected_resource: https://www.aerofarms.com/.well-known/oauth-protected-resource
+    authorization_server: https://www.aerofarms.com/.well-known/oauth-authorization-server
+    challenge: >-
+      WWW-Authenticate: Bearer realm="https://www.aerofarms.com",
+      resource_metadata="https://www.aerofarms.com/.well-known/oauth-protected-resource"
+  issuer: https://www.aerofarms.com
+  authorization_endpoint: https://www.aerofarms.com/oauth/authorize
+  token_endpoint: https://www.aerofarms.com/oauth/token
+  revocation_endpoint: https://www.aerofarms.com/oauth/revoke
+  response_types: [code]
+  grant_types: [authorization_code, refresh_token]
+  pkce: S256
+  pkce_required: true
+  token_endpoint_auth_methods: [none]
+  client_registration: >-
+    No dynamic client registration endpoint. The server advertises
+    client_id_metadata_document_supported: true, i.e. a client identifies itself with a URL that
+    resolves to its own client metadata document.
+  bearer_methods: [header]
+  scopes: [mcp]
+  see: scopes/aerofarms-scopes.yml
+  verified: >-
+    Probed 2026-09-10: an anonymous JSON-RPC tools/list returned HTTP 401 with the challenge above and
+    body {"code":"mcp_unauthorized"}. No token was obtained and none was attempted — this profile is
+    built entirely from anonymous requests.
+
+- name: wordpress-session
+  applies_to: >-
+    Every write method on wp/v2 and wc/store; the whole of wc/v3, wc-admin, wc-analytics,
+    wp-abilities/v1, wp/v2/users, and /wp-json/mcp/mcp-adapter-default-server.
+  credential: >-
+    WordPress cookie + X-WP-Nonce for first-party browser calls, or an application password over HTTP
+    Basic for programmatic calls. Neither is issuable by a member of the public — there is no signup.
+  verified: >-
+    wc/v3/products returned 401 woocommerce_rest_cannot_view; wp/v2/users returned 401
+    rest_user_cannot_view; wp-abilities/v1/abilities and mcp-adapter-default-server returned 401
+    rest_forbidden. The Store API advertises the browser scheme in its CORS preflight:
+    Access-Control-Allow-Headers includes Authorization, X-WP-Nonce, Cart-Token and Nonce.
+
+signup:
+  available: false
+  note: >-
+    AeroFarms operates no developer signup, no API key issuance and no partner portal. An agent can
+    read the public tier today and can negotiate OAuth against the MCP server only if it already has
+    a WordPress identity on this site.
+
+security_schemes_in_spec:
+  present: false
+  note: >-
+    The derived OpenAPI documents in openapi/ describe only the anonymous read tier, so they declare
+    no securitySchemes. That is faithful to the surface rather than an omission: adding a scheme the
+    public caller never uses would misdescribe the contract.

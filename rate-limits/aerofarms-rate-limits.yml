@@ -1,0 +1,34 @@
+generated: '2026-09-10'
+method: probed
+source: >-
+  Response headers observed on live requests to https://www.aerofarms.com/wp-json/* on 2026-09-10.
+limit_count: 0
+description: >-
+  No rate limits are published, and none is signalled at runtime. Roughly forty anonymous requests
+  were made across the surface during this pass — collections, single resources, OPTIONS documents
+  and the MCP endpoint — and not one response carried a rate-limit header or a 429.
+rate_limits: []
+response_headers:
+  ratelimit_standard: none
+  x_ratelimit: none
+  retry_after: none
+  observed_instead:
+  - cf-ray
+  - cf-cache-status
+  - x-cache
+  - x-cache-group
+  - age
+  - 'cache-control: max-age=600, must-revalidate (on /.well-known/ documents)'
+  note: >-
+    The headers that ARE present are CDN cache diagnostics. They tell a client whether the edge
+    served the response; they say nothing about quota.
+exhaustion_behaviour:
+  status_code: unknown
+  note: >-
+    Not established, and deliberately not provoked. The site sits behind Cloudflare and a page cache,
+    so an abusive client would most likely meet an edge challenge rather than an API 429 — but that
+    is an inference, not an observation, and nothing here asserts it as fact.
+consumer_advice: >-
+  Treat the absence of a published limit as risk, not as permission. There is no documented quota to
+  stay inside and no header to back off on, so a polite fixed rate and respect for the cache headers
+  is the only safe posture.

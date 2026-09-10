@@ -1,0 +1,120 @@
+generated: '2026-09-10'
+method: probed
+source: >-
+  Live probes of https://www.aerofarms.com/wp-json/* and /.well-known/* on 2026-09-10, plus
+  openapi/ (derived from the site's own route index) and the AeroFarms About Us page.
+description: >-
+  What this surface actually conforms to, asserted only where a document or a response header proves
+  it. AeroFarms makes no conformance claims of its own about its API — it makes none about its API at
+  all — so every entry below is evidenced by something fetched.
+
+conformance:
+
+- id: oauth2
+  conforms: true
+  evidence: https://www.aerofarms.com/.well-known/oauth-authorization-server
+  note: >-
+    RFC 6749/OAuth 2.1 authorization-code flow with refresh tokens, public clients, PKCE required.
+
+- id: rfc8414-authorization-server-metadata
+  conforms: true
+  evidence: https://www.aerofarms.com/.well-known/oauth-authorization-server
+  note: Served at the canonical path, valid JSON, carries issuer + all three endpoints.
+
+- id: rfc9728-protected-resource-metadata
+  conforms: true
+  evidence: https://www.aerofarms.com/.well-known/oauth-protected-resource
+  note: >-
+    Names the resource, its authorization server, bearer_methods_supported and scopes_supported, and
+    is referenced by the resource's own WWW-Authenticate challenge — the full RFC 9728 loop.
+
+- id: rfc7636-pkce
+  conforms: true
+  evidence: 'https://www.aerofarms.com/.well-known/oauth-authorization-server (code_challenge_methods_supported: ["S256"])'
+
+- id: rfc6750-bearer-token
+  conforms: true
+  evidence: 'WWW-Authenticate: Bearer realm=... on POST /wp-json/mcp/mcp-oauth-server (401, probed 2026-09-10)'
+
+- id: mcp
+  conforms: true
+  evidence: https://www.aerofarms.com/wp-json/mcp/mcp-oauth-server
+  note: >-
+    Registered MCP endpoint answering JSON-RPC over HTTP with MCP-shaped authorization. Protocol
+    version could not be read: initialize/tools/list are behind the OAuth gate.
+
+- id: oidc
+  conforms: false
+  evidence: 'https://www.aerofarms.com/.well-known/openid-configuration (404)'
+  note: OAuth only. No OpenID Connect discovery document, no id_token, no userinfo endpoint.
+
+- id: rfc9457-problem-details
+  conforms: false
+  evidence: 'Observed error bodies are application/json {code, message, data.status}, not application/problem+json.'
+  note: See errors/aerofarms-problem-types.yml — the envelope is the WordPress one, and it is consistent.
+
+- id: pagination
+  conforms: true
+  evidence: >-
+    GET /wp-json/wc/store/products?per_page=1 returned X-WP-Total: 8, X-WP-TotalPages: 8 and
+    Link: <...&page=2>; rel="next" (probed 2026-09-10).
+  note: Page/per_page offset pagination with RFC 8288 Link headers on every collection.
+
+- id: rfc8288-web-linking
+  conforms: true
+  evidence: 'Link: <https://www.aerofarms.com/wp-json/wc/store/products?per_page=1&page=2>; rel="next"'
+
+- id: hal-style-links
+  conforms: true
+  evidence: 'Every wp/v2 resource carries a _links object with self, collection, about and curies.'
+  note: WordPress uses HAL-flavored _links, not full HAL media types.
+
+- id: cors
+  conforms: true
+  evidence: >-
+    Access-Control-Allow-Methods: OPTIONS, GET, POST, PUT, PATCH, DELETE and
+    Access-Control-Expose-Headers: X-WP-Total, X-WP-TotalPages, Link, Cart-Token on the Store API.
+
+- id: idempotency
+  conforms: false
+  evidence: 'No Idempotency-Key header is accepted or documented on any route.'
+  note: >-
+    Not a defect for this surface — the anonymous contract has no write operations. See
+    conventions/aerofarms-conventions.yml.
+
+- id: openapi
+  conforms: false
+  evidence: 'https://www.aerofarms.com/openapi.json (404), /swagger.json (404), /apis.json (404)'
+  note: >-
+    AeroFarms publishes no OpenAPI. The nine specs in openapi/ are API Evangelist derivations from the
+    site's own route index and OPTIONS schema documents, not provider artifacts.
+
+- id: oai-pmh
+  conforms: false
+  evidence: 'No OAI-PMH verb surface; not applicable to this provider.'
+
+domain_standard:
+  applicable: false
+  note: >-
+    Reward-only check, correctly empty. AeroFarms' market is fresh produce, and the domain standards
+    that market has — GS1/GTIN product identification, PTI produce traceability, GDSN item sync — are
+    supply-chain data standards that would live in a trading-partner EDI surface, not in a website
+    content API. Nothing in this contract declares one, and none is invented to fill the slot. The
+    company DOES hold real food-safety and product certifications (below), but those are certifications
+    of the farm, not of an API, and they are recorded as company facts rather than as API conformance.
+
+company_certifications:
+  note: >-
+    Published by AeroFarms on its own About Us page and product pages. Recorded here as context for a
+    reader; NOT wired to the apis.yml Compliance pointer, which the API rating reads as a published
+    API/security compliance program (SOC 2, ISO 27001, PCI, HIPAA, FedRAMP). Claiming these there
+    would credit an information-security posture AeroFarms has not published.
+  evidence: https://www.aerofarms.com/about-us/
+  items:
+  - Certified B Corporation
+  - Safe Quality Food (SQF)
+  - Good Agricultural Practices (GAP)
+  - Good Manufacturing Practices (GMP)
+  - Non-GMO Project Verified (stated on product pages)
+  - OU Kosher (stated on product pages)
+  - Founding member, CEA Alliance

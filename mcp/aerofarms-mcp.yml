@@ -1,0 +1,87 @@
+generated: '2026-09-10'
+method: probed
+status: published
+source: >-
+  https://www.aerofarms.com/wp-json/mcp/mcp-oauth-server (JSON-RPC probe),
+  https://www.aerofarms.com/.well-known/oauth-protected-resource,
+  https://www.aerofarms.com/.well-known/oauth-authorization-server,
+  https://www.aerofarms.com/wp-json/mcp (route index)
+description: >-
+  AeroFarms serves a live, reachable Model Context Protocol server from its own website host. This is
+  not a candidate derived from OpenAPI operations: the endpoint exists, answers JSON-RPC, and defends
+  itself with a standards-shaped OAuth 2.1 challenge. It is almost certainly the WordPress MCP Adapter
+  rather than a product AeroFarms built — the site is WordPress and the route lives in the plugin's
+  `mcp` REST namespace — but it is served by AeroFarms on an AeroFarms host, which is what makes it a
+  real agent surface for this company.
+
+deployment:
+  mode: remote
+  endpoint: https://www.aerofarms.com/wp-json/mcp/mcp-oauth-server
+  auth: oauth
+  verified: probed
+
+server:
+  name: mcp-oauth-server
+  transport: http
+  url: https://www.aerofarms.com/wp-json/mcp/mcp-oauth-server
+  methods: [POST, GET, DELETE]
+  published: true
+  implementation: >-
+    WordPress MCP Adapter (REST namespace `mcp`), inferred from the route registration in
+    https://www.aerofarms.com/wp-json/ — not a claim AeroFarms makes in any documentation.
+
+siblings:
+- name: mcp-adapter-default-server
+  url: https://www.aerofarms.com/wp-json/mcp/mcp-adapter-default-server
+  methods: [POST, GET, DELETE]
+  auth: wordpress-session
+  note: >-
+    A second registered MCP endpoint on the same host. An anonymous tools/list returns HTTP 401
+    {"code":"rest_forbidden"} with NO WWW-Authenticate header, i.e. it is gated on an ordinary
+    WordPress capability check rather than on OAuth, so an external agent has no documented way in.
+    Recorded for completeness; the OAuth server above is the one an agent can actually negotiate.
+
+auth:
+  required: true
+  scheme: oauth2
+  scopes: [mcp]
+  authorization_server: https://www.aerofarms.com
+  authorization_endpoint: https://www.aerofarms.com/oauth/authorize
+  token_endpoint: https://www.aerofarms.com/oauth/token
+  revocation_endpoint: https://www.aerofarms.com/oauth/revoke
+  grant_types: [authorization_code, refresh_token]
+  pkce: S256
+  client_registration: client_id metadata document (client_id_metadata_document_supported true)
+  token_endpoint_auth_methods: [none]
+  discovery:
+    protected_resource: https://www.aerofarms.com/.well-known/oauth-protected-resource
+    authorization_server: https://www.aerofarms.com/.well-known/oauth-authorization-server
+  see: authentication/aerofarms-authentication.yml
+
+probe:
+  fetched: '2026-09-10'
+  request: 'POST {"jsonrpc":"2.0","id":1,"method":"tools/list"} with Accept: application/json, text/event-stream'
+  http_status: 401
+  content_type: application/json
+  www_authenticate: >-
+    Bearer realm="https://www.aerofarms.com",
+    resource_metadata="https://www.aerofarms.com/.well-known/oauth-protected-resource"
+  body: '{"code":"mcp_unauthorized","message":"MCP authentication required.","data":{"status":401}}'
+  verdict: >-
+    Live and correctly gated. The challenge is textbook MCP authorization — RFC 9728 resource metadata
+    named in WWW-Authenticate, RFC 8414 authorization-server metadata served, PKCE required, public
+    clients supported through client_id metadata documents. That is a better-formed authorization
+    posture than most hosted MCP servers in this catalog publish.
+
+tools:
+  enumerated: false
+  reason: >-
+    tools/list is auth-gated (HTTP 401). The live tool set and its inputSchemas require an
+    authenticated session, and AeroFarms publishes no tool list anywhere else — its llms.txt is a
+    Yoast content index, not a tool manifest. NOTHING IS GUESSED HERE: no candidate tool list is
+    written for this server, because inventing one would misrepresent a server that really exists
+    and really has a definite tool set we simply cannot read.
+  next_step: >-
+    Authenticated introspection with a WordPress account on www.aerofarms.com, or a statement from
+    AeroFarms about which abilities are exposed. The site also registers /wp-json/wp-abilities/v1
+    (the WordPress Abilities API the adapter maps tools from); it too answers 401 anonymously.

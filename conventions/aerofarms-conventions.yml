@@ -1,0 +1,130 @@
+generated: '2026-09-10'
+method: probed
+source: >-
+  Live requests against https://www.aerofarms.com/wp-json/* on 2026-09-10 (response headers and
+  bodies), the site's own route index and OPTIONS documents, and openapi/ derived from them.
+description: >-
+  Cross-cutting runtime semantics of the AeroFarms REST surface. AeroFarms documents none of this —
+  there is no developer portal — so every rule below is what the server actually did when called.
+
+auth:
+  style: >-
+    None on the public tier. OAuth 2.1 bearer (scope `mcp`) on the MCP endpoint; WordPress cookie +
+    X-WP-Nonce or an application password on everything else.
+  see: authentication/aerofarms-authentication.yml
+
+versioning:
+  style: path-namespace
+  detail: >-
+    The version is a path segment inside a plugin namespace — /wp-json/wp/v2/..., /wp-json/wc/store/v1/...,
+    /wp-json/wc/v3/.... 46 namespaces are registered on this host. Namespaces are additive: wc/v1, wc/v2
+    and wc/v3 are all still mounted, so a client pinned to an old one keeps working.
+  header_negotiation: none
+  see: lifecycle/aerofarms-lifecycle.yml
+
+pagination:
+  style: page-and-size
+  params:
+    page: 'Current page of the collection. Default 1, minimum 1.'
+    per_page: 'Items per page. Default 10, minimum 1, maximum 100.'
+    offset: 'Offset the result set by a specific number of items (wp/v2 collections).'
+  response_headers:
+    X-WP-Total: Total number of records matching the query.
+    X-WP-TotalPages: Total number of pages at the current per_page.
+    Link: 'RFC 8288 rel="next" / rel="prev".'
+  observed: 'GET /wp-json/wc/store/products?per_page=1 -> X-WP-Total: 8, X-WP-TotalPages: 8, Link rel="next".'
+  cursor_support: false
+
+field_selection:
+  sparse_fields:
+    param: _fields
+    detail: 'A comma-separated allowlist of top-level fields, e.g. ?_fields=id,title,link. Verified working 2026-09-10.'
+  embedding:
+    param: _embed
+    detail: >-
+      Registered by WordPress to inline linked resources (author, featured media, terms, replies)
+      under _embedded. Probed on 2026-09-10 against wp/v2/posts: the parameter is accepted (HTTP 200)
+      but _embedded came back an empty object, so embedding does not usefully save a round trip on
+      this site. Recorded as observed rather than as advertised.
+  context:
+    param: context
+    values: [view, embed, edit]
+    detail: >-
+      Selects the field set. `edit` requires authentication; anonymous callers get `view` or `embed`.
+
+filtering_and_sorting:
+  search: '?search=<string> on every collection; ?slug=, ?include=, ?exclude=, ?after=, ?before=, ?modified_after=.'
+  ordering: '?orderby= (date, id, title, slug, relevance, include, modified …) with ?order=asc|desc. Verified: orderby=title&order=asc returned 200.'
+  taxonomy: '?categories=, ?tags=, ?product_cat= and their _exclude counterparts.'
+
+response_shape:
+  collections: 'A bare JSON array — not an envelope. The counts live in headers, not in the body.'
+  resources: 'A JSON object with a _links member (self, collection, about, author, replies, wp:term, curies).'
+  links: 'HAL-flavored _links with curies for the wp: prefix. Verified on wp/v2/posts.'
+  content_fields: 'Rendered HTML strings under {rendered: "..."} for title, content and excerpt.'
+
+error_envelope:
+  media_type: application/json
+  shape: '{code: <string>, message: <string>, data: {status: <int>, params?: {…}}}'
+  note: 'Not RFC 9457. Consistent across core, WooCommerce and MCP routes.'
+  see: errors/aerofarms-problem-types.yml
+
+request_id_tracing:
+  supported: false
+  note: >-
+    No request-id or correlation header is returned. Responses carry CDN diagnostics (cf-ray,
+    x-cache, x-cache-group, age) which identify the edge hit, not the application request.
+
+caching:
+  detail: >-
+    Fronted by a page cache and Cloudflare. Observed on /.well-known/ documents:
+    cache-control: max-age=600, must-revalidate, plus x-cache / cf-cache-status. ETag/If-None-Match
+    was not observed on the JSON routes.
+
+rate_limit_signaling:
+  headers: none
+  note: >-
+    No RateLimit-*, X-RateLimit-* or Retry-After header was returned on any successful request.
+    See rate-limits/aerofarms-rate-limits.yml.
+
+idempotency:
+  supported: false
+  coverage: none
+  mechanism: null
+  note: >-
+    No Idempotency-Key header is accepted or documented anywhere on this surface, and no request
+    fingerprinting is described. This is `none` rather than `na` in the literal sense that the header
+    does not exist — but read it alongside the reversibility block: the anonymous contract has no
+    write operations at all, so there is no replay to protect against. The write methods that exist
+    (wp/v2 POST/PUT/DELETE, wc/v3, the Store API cart and checkout) are gated behind credentials no
+    member of the public can obtain.
+
+dry_run_mode:
+  supported: false
+  coverage: na
+  note: 'No write surface is publicly reachable, so there is nothing to rehearse.'
+
+reversibility:
+  grade: na
+  coverage: na
+  write_surfaces: []
+  note: >-
+    The publicly reachable AeroFarms API is read-only: every anonymous route answers GET only, and
+    every mutating route (wp/v2 writes, wc/v3, wc-admin, the Store API cart and checkout, the MCP
+    servers) returns 401 without credentials that AeroFarms does not issue to the public. There is no
+    action an agent can take here that would need taking back, so reversibility is `na` rather than a
+    zero. No reversal window is asserted anywhere in this file, because AeroFarms states none.
+  reversal_operations: []
+
+pii_and_privacy:
+  note: >-
+    wp/v2/users is 401-gated, so no author accounts are exposed. wp/v2/comments IS anonymously
+    readable and returns commenter display names and avatar URLs on 16 approved comments — public
+    on the website itself, but worth knowing before bulk-harvesting the surface.
+
+cross_links:
+  errors: errors/aerofarms-problem-types.yml
+  lifecycle: lifecycle/aerofarms-lifecycle.yml
+  authentication: authentication/aerofarms-authentication.yml
+  rate_limits: rate-limits/aerofarms-rate-limits.yml
+  data_model: data-model/aerofarms-data-model.yml

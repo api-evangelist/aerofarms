@@ -1,0 +1,116 @@
+generated: '2026-09-10'
+method: probed
+source: >-
+  Error bodies observed live on https://www.aerofarms.com/wp-json/* on 2026-09-10, plus the
+  4xx responses declared in openapi/.
+format: wordpress-rest
+media_type: application/json
+rfc9457: false
+description: >-
+  AeroFarms publishes no error reference. Every entry below was returned by the live surface during
+  this pass, or is a documented WordPress/WooCommerce code reachable on a route this profile
+  describes. The envelope is uniform across WordPress core, WooCommerce and the MCP adapter, which is
+  the one genuinely agent-friendly property of this surface's error handling.
+
+envelope:
+  shape: '{code: <string>, message: <string>, data: {status: <int>, params?: {<field>: <message>}}}'
+  status_in_body: true
+  note: >-
+    `code` is the stable machine-readable identifier — match on it, not on `message`, which is
+    localized and editorial. `data.params` appears only on validation failures.
+
+problem_types:
+
+- code: rest_forbidden
+  status: 401
+  title: Not allowed
+  message_observed: 'Sorry, you are not allowed to do that.'
+  observed_on:
+  - POST /wp-json/mcp/mcp-adapter-default-server
+  - GET /wp-json/wp-abilities/v1/abilities
+  cause: >-
+    The route requires a WordPress capability the caller does not have. Returned to anonymous callers
+    with NO WWW-Authenticate header, so there is no negotiable challenge — this is a dead end, not a
+    login prompt.
+  remediation: >-
+    None available to the public. AeroFarms issues no credentials for this site; treat the route as
+    private.
+
+- code: mcp_unauthorized
+  status: 401
+  title: MCP authentication required
+  message_observed: 'MCP authentication required.'
+  observed_on:
+  - POST /wp-json/mcp/mcp-oauth-server
+  cause: No bearer token, or an invalid one, on the OAuth-protected MCP server.
+  remediation: >-
+    Follow the WWW-Authenticate challenge to
+    https://www.aerofarms.com/.well-known/oauth-protected-resource, then to the authorization server
+    metadata, and complete an authorization_code + PKCE (S256) flow for scope `mcp`. Unlike
+    rest_forbidden this error IS negotiable — it names its own discovery document.
+  headers:
+    WWW-Authenticate: 'Bearer realm="https://www.aerofarms.com", resource_metadata="https://www.aerofarms.com/.well-known/oauth-protected-resource"'
+
+- code: woocommerce_rest_cannot_view
+  status: 401
+  title: Cannot list resources
+  message_observed: 'Sorry, you cannot list resources.'
+  observed_on:
+  - GET /wp-json/wc/v3/products
+  cause: >-
+    The WooCommerce admin REST API (wc/v1, wc/v2, wc/v3, wc-admin, wc-analytics) requires consumer
+    key/secret or an authenticated session.
+  remediation: >-
+    Use the public Store API instead — /wp-json/wc/store/v1/products returns the same catalog with
+    prices to anonymous callers.
+
+- code: rest_user_cannot_view
+  status: 401
+  title: Cannot list users
+  message_observed: 'Sorry, you are not allowed to list users.'
+  observed_on:
+  - GET /wp-json/wp/v2/users
+  cause: User enumeration is disabled for anonymous callers on this site.
+  remediation: >-
+    Author identity is exposed indirectly through the `author` field and the wp:author _link on
+    posts, not through the users collection.
+
+- code: rest_invalid_param
+  status: 400
+  title: Invalid parameter
+  message_observed: 'Invalid parameter(s): <name>'
+  cause: >-
+    A query parameter failed the schema the route publishes in its OPTIONS document — per_page above
+    100, an unknown orderby, a malformed date on after/before.
+  remediation: >-
+    Read the parameter's schema from the OPTIONS document for the route, or from the derived specs in
+    openapi/, and correct the value. data.params carries a per-field message.
+  declared_in: openapi/ (400 response on every operation)
+
+- code: rest_no_route
+  status: 404
+  title: No route
+  message_observed: 'No route was found matching the URL and request method.'
+  cause: A path or method that is not registered in the route index.
+  remediation: 'Re-read GET /wp-json/ — it enumerates every registered route and its methods.'
+  declared_in: openapi/ (404 response on every operation)
+
+- code: rest_post_invalid_id
+  status: 404
+  title: Invalid post ID
+  message_observed: 'Invalid post ID.'
+  cause: A single-resource route was called with an id that does not exist or is not published.
+  remediation: List the collection first and use an id it returns.
+
+anti_patterns:
+- id: redirected-route-masquerading-as-success
+  severity: high
+  detail: >-
+    /wp-json/wp/v2/media/{id} does not return an error when it fails — it 30x-redirects to
+    https://www.aerofarms.com/media-contact-form/ and returns HTTP 200 with an HTML page. A client
+    that checks only the status code will treat a 264KB marketing page as a media object. Verified
+    2026-09-10 on ids 30450 and 29403, on both GET and OPTIONS. The cause is a Redirection plugin
+    rule on this site, not WordPress behaviour.
+  mitigation: >-
+    Assert content-type application/json before parsing, on every route. This profile omits the
+    single-media route from openapi/ for the same reason.
