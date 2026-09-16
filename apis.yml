@@ -30,284 +30,15 @@ tags:
 - Commerce
 - MCP
 apis:
-- aid: aerofarms:aerofarms-news-api
-  name: AeroFarms News API
-  description: Public, unauthenticated read access to the AeroFarms news and press archive via the WordPress core
-    REST API — 289 published posts and 16 approved comments verified live on 2026-09-10.
-  humanURL: https://www.aerofarms.com/wp-json/
-  baseURL: https://www.aerofarms.com/wp-json
-  tags:
-  - News
-  - Content
-  - Press
-  properties:
-  - type: OpenAPI
-    url: openapi/aerofarms-news-openapi.yml
-  - type: Overlay
-    url: overlays/aerofarms-news-overlay.yaml
-  - type: Authentication
-    url: authentication/aerofarms-authentication.yml
-  - type: ErrorCatalog
-    url: errors/aerofarms-problem-types.yml
-  - type: Conventions
-    url: conventions/aerofarms-conventions.yml
-  - type: Conformance
-    url: conformance/aerofarms-conformance.yml
-  - type: Lifecycle
-    url: lifecycle/aerofarms-lifecycle.yml
-  - type: RateLimits
-    url: rate-limits/aerofarms-rate-limits.yml
-  - type: DataModel
-    url: data-model/aerofarms-data-model.yml
-  image: https://www.aerofarms.com/wp-content/uploads/2021/04/cropped-AF-Favicon-copy.png
-- aid: aerofarms:aerofarms-pages-api
-  name: AeroFarms Pages API
-  description: Public, unauthenticated read access to the 56 published marketing and policy pages of www.aerofarms.com
-    — About Us, How We Grow, Our Microgreens, FlavorSpectrum, Store Locator, Commercial Partnerships, Careers, Terms
-    and Privacy.
-  humanURL: https://www.aerofarms.com/wp-json/
-  baseURL: https://www.aerofarms.com/wp-json
-  tags:
-  - Pages
-  - Content
-  properties:
-  - type: OpenAPI
-    url: openapi/aerofarms-pages-openapi.yml
-  - type: Overlay
-    url: overlays/aerofarms-pages-overlay.yaml
-  - type: Authentication
-    url: authentication/aerofarms-authentication.yml
-  - type: ErrorCatalog
-    url: errors/aerofarms-problem-types.yml
-  - type: Conventions
-    url: conventions/aerofarms-conventions.yml
-  - type: Conformance
-    url: conformance/aerofarms-conformance.yml
-  - type: Lifecycle
-    url: lifecycle/aerofarms-lifecycle.yml
-  - type: RateLimits
-    url: rate-limits/aerofarms-rate-limits.yml
-  - type: DataModel
-    url: data-model/aerofarms-data-model.yml
-  image: https://www.aerofarms.com/wp-content/uploads/2021/04/cropped-AF-Favicon-copy.png
-- aid: aerofarms:aerofarms-products-api
-  name: AeroFarms Products API
-  description: Public, unauthenticated read access to the AeroFarms microgreens catalog as WordPress product objects
-    — 8 published products across 3 product-category terms, verified live on 2026-09-10.
-  humanURL: https://www.aerofarms.com/wp-json/
-  baseURL: https://www.aerofarms.com/wp-json
-  tags:
-  - Products
-  - Catalog
-  - Agriculture
-  properties:
-  - type: OpenAPI
-    url: openapi/aerofarms-products-openapi.yml
-  - type: Overlay
-    url: overlays/aerofarms-products-overlay.yaml
-  - type: Authentication
-    url: authentication/aerofarms-authentication.yml
-  - type: ErrorCatalog
-    url: errors/aerofarms-problem-types.yml
-  - type: Conventions
-    url: conventions/aerofarms-conventions.yml
-  - type: Conformance
-    url: conformance/aerofarms-conformance.yml
-  - type: Lifecycle
-    url: lifecycle/aerofarms-lifecycle.yml
-  - type: RateLimits
-    url: rate-limits/aerofarms-rate-limits.yml
-  - type: DataModel
-    url: data-model/aerofarms-data-model.yml
-  image: https://www.aerofarms.com/wp-content/uploads/2021/04/cropped-AF-Favicon-copy.png
-- aid: aerofarms:aerofarms-store-api
-  name: AeroFarms Store API
-  description: 'Public, unauthenticated read access to the AeroFarms WooCommerce storefront through the WooCommerce
-    Store API — the product catalog with images, attributes, stock state and facet data, plus the anonymous session
-    cart. WooCommerce runs here as a catalog rather than a shop: all 8 products return a price of 0 in an unconfigured
-    GBP default currency.'
-  humanURL: https://www.aerofarms.com/wp-json/
-  baseURL: https://www.aerofarms.com/wp-json
-  tags:
-  - Store
-  - Commerce
-  - Products
-  - Cart
-  properties:
-  - type: OpenAPI
-    url: openapi/aerofarms-store-openapi.yml
-  - type: Overlay
-    url: overlays/aerofarms-store-overlay.yaml
-  - type: Authentication
-    url: authentication/aerofarms-authentication.yml
-  - type: ErrorCatalog
-    url: errors/aerofarms-problem-types.yml
-  - type: Conventions
-    url: conventions/aerofarms-conventions.yml
-  - type: Conformance
-    url: conformance/aerofarms-conformance.yml
-  - type: Lifecycle
-    url: lifecycle/aerofarms-lifecycle.yml
-  - type: RateLimits
-    url: rate-limits/aerofarms-rate-limits.yml
-  - type: DataModel
-    url: data-model/aerofarms-data-model.yml
-  image: https://www.aerofarms.com/wp-content/uploads/2021/04/cropped-AF-Favicon-copy.png
-- aid: aerofarms:aerofarms-faq-api
-  name: AeroFarms FAQ API
-  description: Public, unauthenticated read access to the AeroFarms FAQ knowledge base — 18 published answers across
-    8 FAQ categories covering microgreens, growing practices, organic and non-GMO status and storage.
-  humanURL: https://www.aerofarms.com/wp-json/
-  baseURL: https://www.aerofarms.com/wp-json
-  tags:
-  - FAQ
-  - Knowledge Base
-  - Content
-  properties:
-  - type: OpenAPI
-    url: openapi/aerofarms-faq-openapi.yml
-  - type: Overlay
-    url: overlays/aerofarms-faq-overlay.yaml
-  - type: Authentication
-    url: authentication/aerofarms-authentication.yml
-  - type: ErrorCatalog
-    url: errors/aerofarms-problem-types.yml
-  - type: Conventions
-    url: conventions/aerofarms-conventions.yml
-  - type: Conformance
-    url: conformance/aerofarms-conformance.yml
-  - type: Lifecycle
-    url: lifecycle/aerofarms-lifecycle.yml
-  - type: RateLimits
-    url: rate-limits/aerofarms-rate-limits.yml
-  - type: DataModel
-    url: data-model/aerofarms-data-model.yml
-  image: https://www.aerofarms.com/wp-content/uploads/2021/04/cropped-AF-Favicon-copy.png
-- aid: aerofarms:aerofarms-taxonomy-api
-  name: AeroFarms Taxonomy API
-  description: Public, unauthenticated read access to the editorial taxonomy behind the AeroFarms news archive —
-    9 categories and 455 tags with post counts.
-  humanURL: https://www.aerofarms.com/wp-json/
-  baseURL: https://www.aerofarms.com/wp-json
-  tags:
-  - Taxonomy
-  - Tags
-  - Categories
-  - Content
-  properties:
-  - type: OpenAPI
-    url: openapi/aerofarms-taxonomy-openapi.yml
-  - type: Overlay
-    url: overlays/aerofarms-taxonomy-overlay.yaml
-  - type: Authentication
-    url: authentication/aerofarms-authentication.yml
-  - type: ErrorCatalog
-    url: errors/aerofarms-problem-types.yml
-  - type: Conventions
-    url: conventions/aerofarms-conventions.yml
-  - type: Conformance
-    url: conformance/aerofarms-conformance.yml
-  - type: Lifecycle
-    url: lifecycle/aerofarms-lifecycle.yml
-  - type: RateLimits
-    url: rate-limits/aerofarms-rate-limits.yml
-  - type: DataModel
-    url: data-model/aerofarms-data-model.yml
-  image: https://www.aerofarms.com/wp-content/uploads/2021/04/cropped-AF-Favicon-copy.png
-- aid: aerofarms:aerofarms-media-api
-  name: AeroFarms Media API
-  description: Public, unauthenticated read access to the AeroFarms media library — 5,605 attachments of farm and
-    product photography, FlavorSpectrum imagery and press assets with their generated size variants.
-  humanURL: https://www.aerofarms.com/wp-json/
-  baseURL: https://www.aerofarms.com/wp-json
-  tags:
-  - Media
-  - Images
-  - Content
-  properties:
-  - type: OpenAPI
-    url: openapi/aerofarms-media-openapi.yml
-  - type: Overlay
-    url: overlays/aerofarms-media-overlay.yaml
-  - type: Authentication
-    url: authentication/aerofarms-authentication.yml
-  - type: ErrorCatalog
-    url: errors/aerofarms-problem-types.yml
-  - type: Conventions
-    url: conventions/aerofarms-conventions.yml
-  - type: Conformance
-    url: conformance/aerofarms-conformance.yml
-  - type: Lifecycle
-    url: lifecycle/aerofarms-lifecycle.yml
-  - type: RateLimits
-    url: rate-limits/aerofarms-rate-limits.yml
-  - type: DataModel
-    url: data-model/aerofarms-data-model.yml
-  image: https://www.aerofarms.com/wp-content/uploads/2021/04/cropped-AF-Favicon-copy.png
-- aid: aerofarms:aerofarms-search-api
-  name: AeroFarms Search API
-  description: Public, unauthenticated cross-content search over www.aerofarms.com — posts, pages, products and
-    FAQ entries — across 371 searchable objects.
-  humanURL: https://www.aerofarms.com/wp-json/
-  baseURL: https://www.aerofarms.com/wp-json
-  tags:
-  - Search
-  - Content
-  properties:
-  - type: OpenAPI
-    url: openapi/aerofarms-search-openapi.yml
-  - type: Overlay
-    url: overlays/aerofarms-search-overlay.yaml
-  - type: Authentication
-    url: authentication/aerofarms-authentication.yml
-  - type: ErrorCatalog
-    url: errors/aerofarms-problem-types.yml
-  - type: Conventions
-    url: conventions/aerofarms-conventions.yml
-  - type: Conformance
-    url: conformance/aerofarms-conformance.yml
-  - type: Lifecycle
-    url: lifecycle/aerofarms-lifecycle.yml
-  - type: RateLimits
-    url: rate-limits/aerofarms-rate-limits.yml
-  image: https://www.aerofarms.com/wp-content/uploads/2021/04/cropped-AF-Favicon-copy.png
-- aid: aerofarms:aerofarms-discovery-api
-  name: AeroFarms Discovery API
-  description: The public route index and registry surface of the AeroFarms REST API — 917 registered routes across
-    46 namespaces, plus the registered content types, taxonomies and post statuses. This is the machine-readable
-    contract every other spec in this profile was derived from.
-  humanURL: https://www.aerofarms.com/wp-json/
-  baseURL: https://www.aerofarms.com/wp-json
-  tags:
-  - Discovery
-  - Metadata
-  - Content
-  properties:
-  - type: OpenAPI
-    url: openapi/aerofarms-discovery-openapi.yml
-  - type: Overlay
-    url: overlays/aerofarms-discovery-overlay.yaml
-  - type: Authentication
-    url: authentication/aerofarms-authentication.yml
-  - type: ErrorCatalog
-    url: errors/aerofarms-problem-types.yml
-  - type: Conventions
-    url: conventions/aerofarms-conventions.yml
-  - type: Conformance
-    url: conformance/aerofarms-conformance.yml
-  - type: Lifecycle
-    url: lifecycle/aerofarms-lifecycle.yml
-  - type: RateLimits
-    url: rate-limits/aerofarms-rate-limits.yml
-  image: https://www.aerofarms.com/wp-content/uploads/2021/04/cropped-AF-Favicon-copy.png
 - aid: aerofarms:aerofarms-mcp-server
   name: AeroFarms MCP Server
-  description: 'A live Model Context Protocol server served from www.aerofarms.com at /wp-json/mcp/mcp-oauth-server.
-    It answers JSON-RPC over HTTP and is protected by OAuth 2.1: an anonymous tools/list returns HTTP 401 with a
-    WWW-Authenticate Bearer challenge naming RFC 9728 protected-resource metadata, and the site publishes RFC 8414
-    authorization-server metadata declaring PKCE S256, authorization_code and refresh_token grants and a single
-    ''mcp'' scope. Verified by probe on 2026-09-10. The tool list itself requires an authenticated session and is
-    therefore not enumerated here.'
+  description: >-
+    A live Model Context Protocol server served from www.aerofarms.com at /wp-json/mcp/mcp-oauth-server.
+    It answers JSON-RPC over HTTP and is protected by OAuth 2.1: an anonymous tools/list returns HTTP
+    401 with a WWW-Authenticate Bearer challenge naming RFC 9728 protected-resource metadata, and the
+    site publishes RFC 8414 authorization-server metadata declaring PKCE S256, authorization_code and
+    refresh_token grants and a single 'mcp' scope. Verified by probe on 2026-09-10. The tool list itself
+    requires an authenticated session and is therefore not enumerated here.
   humanURL: https://www.aerofarms.com/wp-json/mcp
   baseURL: https://www.aerofarms.com/wp-json/mcp/mcp-oauth-server
   tags:
@@ -328,12 +59,318 @@ apis:
   - type: Conformance
     url: conformance/aerofarms-conformance.yml
   image: https://www.aerofarms.com/wp-content/uploads/2021/04/cropped-AF-Favicon-copy.png
+- aid: aerofarms:aerofarms-cart-api
+  name: AeroFarms Cart API
+  description: Anonymous WooCommerce Store API session cart.
+  humanURL: https://www.aerofarms.com/wp-json/
+  baseURL: https://www.aerofarms.com/wp-json
+  tags:
+  - Cart
+  properties:
+  - type: OpenAPI
+    url: openapi/aerofarms-cart-api-openapi.yml
+  - type: Authentication
+    url: authentication/aerofarms-authentication.yml
+  - type: ErrorCatalog
+    url: errors/aerofarms-problem-types.yml
+  - type: Conventions
+    url: conventions/aerofarms-conventions.yml
+  - type: Conformance
+    url: conformance/aerofarms-conformance.yml
+  - type: Lifecycle
+    url: lifecycle/aerofarms-lifecycle.yml
+  - type: RateLimits
+    url: rate-limits/aerofarms-rate-limits.yml
+  - type: DataModel
+    url: data-model/aerofarms-data-model.yml
+- aid: aerofarms:aerofarms-comments-api
+  name: AeroFarms Comments API
+  description: Approved reader comments and AeroFarms replies on news posts.
+  humanURL: https://www.aerofarms.com/wp-json/
+  baseURL: https://www.aerofarms.com/wp-json
+  tags:
+  - Comments
+  properties:
+  - type: OpenAPI
+    url: openapi/aerofarms-comments-api-openapi.yml
+  - type: Authentication
+    url: authentication/aerofarms-authentication.yml
+  - type: ErrorCatalog
+    url: errors/aerofarms-problem-types.yml
+  - type: Conventions
+    url: conventions/aerofarms-conventions.yml
+  - type: Conformance
+    url: conformance/aerofarms-conformance.yml
+  - type: Lifecycle
+    url: lifecycle/aerofarms-lifecycle.yml
+  - type: RateLimits
+    url: rate-limits/aerofarms-rate-limits.yml
+  - type: DataModel
+    url: data-model/aerofarms-data-model.yml
+- aid: aerofarms:aerofarms-discovery-api
+  name: AeroFarms Discovery API
+  description: Route index, content types, taxonomies and statuses.
+  humanURL: https://www.aerofarms.com/wp-json/
+  baseURL: https://www.aerofarms.com/wp-json
+  tags:
+  - Discovery
+  properties:
+  - type: OpenAPI
+    url: openapi/aerofarms-discovery-api-openapi.yml
+  - type: Authentication
+    url: authentication/aerofarms-authentication.yml
+  - type: ErrorCatalog
+    url: errors/aerofarms-problem-types.yml
+  - type: Conventions
+    url: conventions/aerofarms-conventions.yml
+  - type: Conformance
+    url: conformance/aerofarms-conformance.yml
+  - type: Lifecycle
+    url: lifecycle/aerofarms-lifecycle.yml
+  - type: RateLimits
+    url: rate-limits/aerofarms-rate-limits.yml
+  - type: DataModel
+    url: data-model/aerofarms-data-model.yml
+- aid: aerofarms:aerofarms-faqs-api
+  name: AeroFarms FA Qs API
+  description: AeroFarms customer FAQ entries and their categories.
+  humanURL: https://www.aerofarms.com/wp-json/
+  baseURL: https://www.aerofarms.com/wp-json
+  tags:
+  - FAQs
+  properties:
+  - type: OpenAPI
+    url: openapi/aerofarms-faqs-api-openapi.yml
+  - type: Authentication
+    url: authentication/aerofarms-authentication.yml
+  - type: ErrorCatalog
+    url: errors/aerofarms-problem-types.yml
+  - type: Conventions
+    url: conventions/aerofarms-conventions.yml
+  - type: Conformance
+    url: conformance/aerofarms-conformance.yml
+  - type: Lifecycle
+    url: lifecycle/aerofarms-lifecycle.yml
+  - type: RateLimits
+    url: rate-limits/aerofarms-rate-limits.yml
+  - type: DataModel
+    url: data-model/aerofarms-data-model.yml
+- aid: aerofarms:aerofarms-media-api
+  name: AeroFarms Media API
+  description: AeroFarms image and document library with size variants.
+  humanURL: https://www.aerofarms.com/wp-json/
+  baseURL: https://www.aerofarms.com/wp-json
+  tags:
+  - Media
+  properties:
+  - type: OpenAPI
+    url: openapi/aerofarms-media-api-openapi.yml
+  - type: Authentication
+    url: authentication/aerofarms-authentication.yml
+  - type: ErrorCatalog
+    url: errors/aerofarms-problem-types.yml
+  - type: Conventions
+    url: conventions/aerofarms-conventions.yml
+  - type: Conformance
+    url: conformance/aerofarms-conformance.yml
+  - type: Lifecycle
+    url: lifecycle/aerofarms-lifecycle.yml
+  - type: RateLimits
+    url: rate-limits/aerofarms-rate-limits.yml
+  - type: DataModel
+    url: data-model/aerofarms-data-model.yml
+- aid: aerofarms:aerofarms-news-api
+  name: AeroFarms News API
+  description: AeroFarms press releases, announcements and articles.
+  humanURL: https://www.aerofarms.com/wp-json/
+  baseURL: https://www.aerofarms.com/wp-json
+  tags:
+  - News
+  properties:
+  - type: OpenAPI
+    url: openapi/aerofarms-news-api-openapi.yml
+  - type: Authentication
+    url: authentication/aerofarms-authentication.yml
+  - type: ErrorCatalog
+    url: errors/aerofarms-problem-types.yml
+  - type: Conventions
+    url: conventions/aerofarms-conventions.yml
+  - type: Conformance
+    url: conformance/aerofarms-conformance.yml
+  - type: Lifecycle
+    url: lifecycle/aerofarms-lifecycle.yml
+  - type: RateLimits
+    url: rate-limits/aerofarms-rate-limits.yml
+  - type: DataModel
+    url: data-model/aerofarms-data-model.yml
+- aid: aerofarms:aerofarms-pages-api
+  name: AeroFarms Pages API
+  description: Static marketing and policy pages of the AeroFarms website.
+  humanURL: https://www.aerofarms.com/wp-json/
+  baseURL: https://www.aerofarms.com/wp-json
+  tags:
+  - Pages
+  properties:
+  - type: OpenAPI
+    url: openapi/aerofarms-pages-api-openapi.yml
+  - type: Authentication
+    url: authentication/aerofarms-authentication.yml
+  - type: ErrorCatalog
+    url: errors/aerofarms-problem-types.yml
+  - type: Conventions
+    url: conventions/aerofarms-conventions.yml
+  - type: Conformance
+    url: conformance/aerofarms-conformance.yml
+  - type: Lifecycle
+    url: lifecycle/aerofarms-lifecycle.yml
+  - type: RateLimits
+    url: rate-limits/aerofarms-rate-limits.yml
+  - type: DataModel
+    url: data-model/aerofarms-data-model.yml
+- aid: aerofarms:aerofarms-product-taxonomy-api
+  name: AeroFarms Product Taxonomy API
+  description: Product category, brand and tag taxonomies.
+  humanURL: https://www.aerofarms.com/wp-json/
+  baseURL: https://www.aerofarms.com/wp-json
+  tags:
+  - Product Taxonomy
+  properties:
+  - type: OpenAPI
+    url: openapi/aerofarms-product-taxonomy-api-openapi.yml
+  - type: Authentication
+    url: authentication/aerofarms-authentication.yml
+  - type: ErrorCatalog
+    url: errors/aerofarms-problem-types.yml
+  - type: Conventions
+    url: conventions/aerofarms-conventions.yml
+  - type: Conformance
+    url: conformance/aerofarms-conformance.yml
+  - type: Lifecycle
+    url: lifecycle/aerofarms-lifecycle.yml
+  - type: RateLimits
+    url: rate-limits/aerofarms-rate-limits.yml
+  - type: DataModel
+    url: data-model/aerofarms-data-model.yml
+- aid: aerofarms:aerofarms-products-api
+  name: AeroFarms Products API
+  description: AeroFarms microgreens products as WordPress product posts.
+  humanURL: https://www.aerofarms.com/wp-json/
+  baseURL: https://www.aerofarms.com/wp-json
+  tags:
+  - Products
+  properties:
+  - type: OpenAPI
+    url: openapi/aerofarms-products-api-openapi.yml
+  - type: Authentication
+    url: authentication/aerofarms-authentication.yml
+  - type: ErrorCatalog
+    url: errors/aerofarms-problem-types.yml
+  - type: Conventions
+    url: conventions/aerofarms-conventions.yml
+  - type: Conformance
+    url: conformance/aerofarms-conformance.yml
+  - type: Lifecycle
+    url: lifecycle/aerofarms-lifecycle.yml
+  - type: RateLimits
+    url: rate-limits/aerofarms-rate-limits.yml
+  - type: DataModel
+    url: data-model/aerofarms-data-model.yml
+- aid: aerofarms:aerofarms-search-api
+  name: AeroFarms Search API
+  description: Cross-content search over the AeroFarms website.
+  humanURL: https://www.aerofarms.com/wp-json/
+  baseURL: https://www.aerofarms.com/wp-json
+  tags:
+  - Search
+  properties:
+  - type: OpenAPI
+    url: openapi/aerofarms-search-api-openapi.yml
+  - type: Authentication
+    url: authentication/aerofarms-authentication.yml
+  - type: ErrorCatalog
+    url: errors/aerofarms-problem-types.yml
+  - type: Conventions
+    url: conventions/aerofarms-conventions.yml
+  - type: Conformance
+    url: conformance/aerofarms-conformance.yml
+  - type: Lifecycle
+    url: lifecycle/aerofarms-lifecycle.yml
+  - type: RateLimits
+    url: rate-limits/aerofarms-rate-limits.yml
+  - type: DataModel
+    url: data-model/aerofarms-data-model.yml
+- aid: aerofarms:aerofarms-store-api
+  name: AeroFarms Store API
+  description: WooCommerce Store API — public storefront catalog and cart.
+  humanURL: https://www.aerofarms.com/wp-json/
+  baseURL: https://www.aerofarms.com/wp-json
+  tags:
+  - Store
+  properties:
+  - type: OpenAPI
+    url: openapi/aerofarms-store-api-openapi.yml
+  - type: Authentication
+    url: authentication/aerofarms-authentication.yml
+  - type: ErrorCatalog
+    url: errors/aerofarms-problem-types.yml
+  - type: Conventions
+    url: conventions/aerofarms-conventions.yml
+  - type: Conformance
+    url: conformance/aerofarms-conformance.yml
+  - type: Lifecycle
+    url: lifecycle/aerofarms-lifecycle.yml
+  - type: RateLimits
+    url: rate-limits/aerofarms-rate-limits.yml
+  - type: DataModel
+    url: data-model/aerofarms-data-model.yml
+- aid: aerofarms:aerofarms-taxonomy-api
+  name: AeroFarms Taxonomy API
+  description: Editorial categories and tags applied to AeroFarms news posts.
+  humanURL: https://www.aerofarms.com/wp-json/
+  baseURL: https://www.aerofarms.com/wp-json
+  tags:
+  - Taxonomy
+  properties:
+  - type: OpenAPI
+    url: openapi/aerofarms-taxonomy-api-openapi.yml
+  - type: Authentication
+    url: authentication/aerofarms-authentication.yml
+  - type: ErrorCatalog
+    url: errors/aerofarms-problem-types.yml
+  - type: Conventions
+    url: conventions/aerofarms-conventions.yml
+  - type: Conformance
+    url: conformance/aerofarms-conformance.yml
+  - type: Lifecycle
+    url: lifecycle/aerofarms-lifecycle.yml
+  - type: RateLimits
+    url: rate-limits/aerofarms-rate-limits.yml
+  - type: DataModel
+    url: data-model/aerofarms-data-model.yml
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
 - FN: APIs.json
   email: info@apis.io
 common:
+- type: Overlay
+  url: overlays/aerofarms-news-overlay.yaml
+- type: Overlay
+  url: overlays/aerofarms-pages-overlay.yaml
+- type: Overlay
+  url: overlays/aerofarms-products-overlay.yaml
+- type: Overlay
+  url: overlays/aerofarms-store-overlay.yaml
+- type: Overlay
+  url: overlays/aerofarms-faq-overlay.yaml
+- type: Overlay
+  url: overlays/aerofarms-taxonomy-overlay.yaml
+- type: Overlay
+  url: overlays/aerofarms-media-overlay.yaml
+- type: Overlay
+  url: overlays/aerofarms-search-overlay.yaml
+- type: Overlay
+  url: overlays/aerofarms-discovery-overlay.yaml
 - type: Website
   url: https://www.aerofarms.com/
 - type: Blog
