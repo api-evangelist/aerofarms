@@ -131,30 +131,6 @@ apis:
     url: rate-limits/aerofarms-rate-limits.yml
   - type: DataModel
     url: data-model/aerofarms-data-model.yml
-- aid: aerofarms:aerofarms-faqs-api
-  name: AeroFarms FA Qs API
-  description: AeroFarms customer FAQ entries and their categories.
-  humanURL: https://www.aerofarms.com/wp-json/
-  baseURL: https://www.aerofarms.com/wp-json
-  tags:
-  - FAQs
-  properties:
-  - type: OpenAPI
-    url: openapi/aerofarms-faqs-api-openapi.yml
-  - type: Authentication
-    url: authentication/aerofarms-authentication.yml
-  - type: ErrorCatalog
-    url: errors/aerofarms-problem-types.yml
-  - type: Conventions
-    url: conventions/aerofarms-conventions.yml
-  - type: Conformance
-    url: conformance/aerofarms-conformance.yml
-  - type: Lifecycle
-    url: lifecycle/aerofarms-lifecycle.yml
-  - type: RateLimits
-    url: rate-limits/aerofarms-rate-limits.yml
-  - type: DataModel
-    url: data-model/aerofarms-data-model.yml
 - aid: aerofarms:aerofarms-media-api
   name: AeroFarms Media API
   description: AeroFarms image and document library with size variants.
@@ -333,6 +309,30 @@ apis:
   properties:
   - type: OpenAPI
     url: openapi/aerofarms-taxonomy-api-openapi.yml
+  - type: Authentication
+    url: authentication/aerofarms-authentication.yml
+  - type: ErrorCatalog
+    url: errors/aerofarms-problem-types.yml
+  - type: Conventions
+    url: conventions/aerofarms-conventions.yml
+  - type: Conformance
+    url: conformance/aerofarms-conformance.yml
+  - type: Lifecycle
+    url: lifecycle/aerofarms-lifecycle.yml
+  - type: RateLimits
+    url: rate-limits/aerofarms-rate-limits.yml
+  - type: DataModel
+    url: data-model/aerofarms-data-model.yml
+- aid: aerofarms:aerofarms-faqs-api
+  name: AeroFarms FA Qs API
+  description: AeroFarms customer FAQ entries and their categories.
+  humanURL: https://www.aerofarms.com/wp-json/mcp
+  baseURL: https://www.aerofarms.com/wp-json/mcp/mcp-oauth-server
+  tags:
+  - FAQs
+  properties:
+  - type: OpenAPI
+    url: openapi/aerofarms-faqs-api-openapi.yml
   - type: Authentication
     url: authentication/aerofarms-authentication.yml
   - type: ErrorCatalog
