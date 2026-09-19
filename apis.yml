@@ -233,6 +233,8 @@ apis:
   humanURL: https://www.aerofarms.com/wp-json/
   baseURL: https://www.aerofarms.com/wp-json
   tags:
+  - Product
+  tags_raw:
   - Products
   properties:
   - type: OpenAPI
