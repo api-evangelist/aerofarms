@@ -2,17 +2,14 @@ openapi: 3.2.0
 info:
   title: AeroFarms Taxonomy API
   version: v2
-  description: Public, unauthenticated read access to the editorial taxonomy behind the AeroFarms news archive — categories
-    such as Awards, Press and Recipes, and the free-form tag vocabulary. Verified live at 9 categories and 455 tags on 2026-09-10.
+  description: Public, unauthenticated read access to the editorial taxonomy behind the AeroFarms news archive — categories such as Awards, Press and Recipes, and the free-form tag vocabulary. Verified live at 9 categories and 455 tags on 2026-09-10.
   contact:
     name: AeroFarms
     url: https://www.aerofarms.com/contact/
     email: info@aerofarms.com
   x-derived-from: https://www.aerofarms.com/wp-json/ route index + per-route HTTP OPTIONS schema documents
   x-derived-on: '2026-09-10'
-  x-api-evangelist-note: Third-party profile. AeroFarms publishes no developer program; this documents the anonymously readable
-    REST surface behind www.aerofarms.com. Every path, parameter and schema here was read from the server's own published
-    route index and OPTIONS documents on 2026-09-10 — nothing is invented.
+  x-api-evangelist-note: Third-party profile. AeroFarms publishes no developer program; this documents the anonymously readable REST surface behind www.aerofarms.com. Every path, parameter and schema here was read from the server's own published route index and OPTIONS documents on 2026-09-10 — nothing is invented.
 servers:
 - url: https://www.aerofarms.com/wp-json
   description: AeroFarms WordPress REST API
@@ -37,15 +34,15 @@ paths:
                 items:
                   $ref: '#/components/schemas/Category'
           headers:
-            X-WP-Total: &id001
+            X-WP-Total:
               description: Total number of records matching the query.
               schema:
                 type: integer
-            X-WP-TotalPages: &id002
+            X-WP-TotalPages:
               description: Total number of pages available at the current per_page.
               schema:
                 type: integer
-            Link: &id003
+            Link:
               description: RFC 8288 pagination links (rel="next" / rel="prev").
               schema:
                 type: string
@@ -216,9 +213,18 @@ paths:
                 items:
                   $ref: '#/components/schemas/Tag'
           headers:
-            X-WP-Total: *id001
-            X-WP-TotalPages: *id002
-            Link: *id003
+            X-WP-Total:
+              description: Total number of records matching the query.
+              schema:
+                type: integer
+            X-WP-TotalPages:
+              description: Total number of pages available at the current per_page.
+              schema:
+                type: integer
+            Link:
+              description: RFC 8288 pagination links (rel="next" / rel="prev").
+              schema:
+                type: string
         '400':
           description: Invalid parameter(s) — rest_invalid_param.
           content:
@@ -348,6 +354,38 @@ components:
             params:
               type: object
               description: Per-parameter validation messages, on rest_invalid_param.
+    Tag:
+      type: object
+      properties:
+        id:
+          description: Unique identifier for the term.
+          type: integer
+        count:
+          description: Number of published posts for the term.
+          type: integer
+        description:
+          description: HTML description of the term.
+          type: string
+        link:
+          description: URL of the term.
+          type: string
+          format: uri
+        name:
+          description: HTML title for the term.
+          type: string
+        slug:
+          description: An alphanumeric identifier for the term unique to its type.
+          type: string
+        taxonomy:
+          description: Type attribution for the term.
+          type: string
+          enum:
+          - post_tag
+        meta:
+          description: Meta fields.
+          type: object
+          properties: []
+      title: tag
     Category:
       type: object
       properties:
@@ -387,35 +425,3 @@ components:
           type: object
           properties: []
       title: category
-    Tag:
-      type: object
-      properties:
-        id:
-          description: Unique identifier for the term.
-          type: integer
-        count:
-          description: Number of published posts for the term.
-          type: integer
-        description:
-          description: HTML description of the term.
-          type: string
-        link:
-          description: URL of the term.
-          type: string
-          format: uri
-        name:
-          description: HTML title for the term.
-          type: string
-        slug:
-          description: An alphanumeric identifier for the term unique to its type.
-          type: string
-        taxonomy:
-          description: Type attribution for the term.
-          type: string
-          enum:
-          - post_tag
-        meta:
-          description: Meta fields.
-          type: object
-          properties: []
-      title: tag

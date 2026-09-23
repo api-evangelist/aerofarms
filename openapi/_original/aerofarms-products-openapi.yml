@@ -1,10 +1,12 @@
+# x-archived-from: aerofarms-products-openapi.yml
+# x-archived-on: 2026-09-16
 openapi: 3.2.0
 info:
-  title: AeroFarms FAQ API
+  title: AeroFarms Products API
   version: v2
-  description: Public, unauthenticated read access to the AeroFarms FAQ knowledge base at www.aerofarms.com/faqs/ — what a
-    microgreen is, how microgreens differ from sprouts, growing practices, organic and non-GMO status, and storage. Verified
-    live at 18 answers across 8 FAQ categories on 2026-09-10.
+  description: Public, unauthenticated read access to the AeroFarms microgreens product catalog as WordPress product objects
+    — micro broccoli, micro arugula, micro wasabi mustard, micro rainbow mix, micro spicy mix and the rest of the FlavorSpectrum
+    range. Verified live at 8 published products in 3 product categories on 2026-09-10.
   contact:
     name: AeroFarms
     url: https://www.aerofarms.com/contact/
@@ -18,25 +20,27 @@ servers:
 - url: https://www.aerofarms.com/wp-json
   description: AeroFarms WordPress REST API
 tags:
-- name: FAQs
-  description: AeroFarms customer FAQ entries and their categories.
+- name: Products
+  description: AeroFarms microgreens products as WordPress product posts.
+- name: Product Taxonomy
+  description: Product category, brand and tag taxonomies.
 paths:
-  /wp/v2/ufaq:
+  /wp/v2/product:
     get:
-      operationId: listFaqs
-      summary: List FAQ entries
-      description: Retrieve published AeroFarms FAQ questions and answers. 18 entries at capture.
+      operationId: listProducts
+      summary: List products
+      description: Retrieve a paginated collection of published AeroFarms microgreens products. 8 products at capture.
       tags:
-      - FAQs
+      - Products
       responses:
         '200':
-          description: List FAQ entries
+          description: List products
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Faq'
+                  $ref: '#/components/schemas/Product'
           headers:
             X-WP-Total: &id001
               description: Total number of records matching the query.
@@ -69,28 +73,17 @@ paths:
           type: string
           format: date-time
         description: Limit response to posts published after a given ISO8601 compliant date.
-      - name: author
-        in: query
-        schema:
-          type: array
-          default: []
-          items:
-            type: integer
-        description: Limit result set to posts assigned to specific authors.
-      - name: author_exclude
-        in: query
-        schema:
-          type: array
-          default: []
-          items:
-            type: integer
-        description: Ensure result set excludes posts assigned to specific authors.
       - name: before
         in: query
         schema:
           type: string
           format: date-time
         description: Limit response to posts published before a given ISO8601 compliant date.
+      - name: brand
+        in: query
+        schema:
+          type: string
+        description: Limit result set to products assigned a specific brand ID.
       - name: context
         in: query
         schema:
@@ -160,6 +153,14 @@ paths:
           - title
           - rand
           - menu_order
+          - popularity
+          - rating
+          - post__in
+          - price
+          - sales
+          - random
+          - popularity
+          - rating
           default: date
         description: Sort collection by post attribute.
       - name: page
@@ -177,6 +178,187 @@ paths:
           minimum: 1
           maximum: 100
         description: Maximum number of items to be returned in result set.
+      - name: product_brand
+        in: query
+        schema:
+          type:
+          - object
+          - array
+          oneOf:
+          - title: Term ID List
+            description: Match terms with the listed IDs.
+            type: array
+            items:
+              type: integer
+          - title: Term ID Taxonomy Query
+            description: Perform an advanced term query.
+            type: object
+            properties:
+              terms:
+                description: Term IDs.
+                type: array
+                items:
+                  type: integer
+                default: []
+              include_children:
+                description: Whether to include child terms in the terms limiting the result set.
+                type: boolean
+                default: false
+              operator:
+                description: Whether items must be assigned all or any of the specified terms.
+                type: string
+                enum:
+                - AND
+                - OR
+                default: OR
+            additionalProperties: false
+        description: Limit result set to items with specific terms assigned in the product_brand taxonomy.
+      - name: product_brand_exclude
+        in: query
+        schema:
+          type:
+          - object
+          - array
+          oneOf:
+          - title: Term ID List
+            description: Match terms with the listed IDs.
+            type: array
+            items:
+              type: integer
+          - title: Term ID Taxonomy Query
+            description: Perform an advanced term query.
+            type: object
+            properties:
+              terms:
+                description: Term IDs.
+                type: array
+                items:
+                  type: integer
+                default: []
+              include_children:
+                description: Whether to include child terms in the terms limiting the result set.
+                type: boolean
+                default: false
+            additionalProperties: false
+        description: Limit result set to items except those with specific terms assigned in the product_brand taxonomy.
+      - name: product_cat
+        in: query
+        schema:
+          type:
+          - object
+          - array
+          oneOf:
+          - title: Term ID List
+            description: Match terms with the listed IDs.
+            type: array
+            items:
+              type: integer
+          - title: Term ID Taxonomy Query
+            description: Perform an advanced term query.
+            type: object
+            properties:
+              terms:
+                description: Term IDs.
+                type: array
+                items:
+                  type: integer
+                default: []
+              include_children:
+                description: Whether to include child terms in the terms limiting the result set.
+                type: boolean
+                default: false
+              operator:
+                description: Whether items must be assigned all or any of the specified terms.
+                type: string
+                enum:
+                - AND
+                - OR
+                default: OR
+            additionalProperties: false
+        description: Limit result set to items with specific terms assigned in the product_cat taxonomy.
+      - name: product_cat_exclude
+        in: query
+        schema:
+          type:
+          - object
+          - array
+          oneOf:
+          - title: Term ID List
+            description: Match terms with the listed IDs.
+            type: array
+            items:
+              type: integer
+          - title: Term ID Taxonomy Query
+            description: Perform an advanced term query.
+            type: object
+            properties:
+              terms:
+                description: Term IDs.
+                type: array
+                items:
+                  type: integer
+                default: []
+              include_children:
+                description: Whether to include child terms in the terms limiting the result set.
+                type: boolean
+                default: false
+            additionalProperties: false
+        description: Limit result set to items except those with specific terms assigned in the product_cat taxonomy.
+      - name: product_tag
+        in: query
+        schema:
+          type:
+          - object
+          - array
+          oneOf:
+          - title: Term ID List
+            description: Match terms with the listed IDs.
+            type: array
+            items:
+              type: integer
+          - title: Term ID Taxonomy Query
+            description: Perform an advanced term query.
+            type: object
+            properties:
+              terms:
+                description: Term IDs.
+                type: array
+                items:
+                  type: integer
+                default: []
+              operator:
+                description: Whether items must be assigned all or any of the specified terms.
+                type: string
+                enum:
+                - AND
+                - OR
+                default: OR
+            additionalProperties: false
+        description: Limit result set to items with specific terms assigned in the product_tag taxonomy.
+      - name: product_tag_exclude
+        in: query
+        schema:
+          type:
+          - object
+          - array
+          oneOf:
+          - title: Term ID List
+            description: Match terms with the listed IDs.
+            type: array
+            items:
+              type: integer
+          - title: Term ID Taxonomy Query
+            description: Perform an advanced term query.
+            type: object
+            properties:
+              terms:
+                description: Term IDs.
+                type: array
+                items:
+                  type: integer
+                default: []
+            additionalProperties: false
+        description: Limit result set to items except those with specific terms assigned in the product_tag taxonomy.
       - name: search
         in: query
         schema:
@@ -248,138 +430,20 @@ paths:
           - AND
           - OR
         description: Limit result set based on relationship between multiple taxonomies.
-      - name: ufaq-category
-        in: query
-        schema:
-          type:
-          - object
-          - array
-          oneOf:
-          - title: Term ID List
-            description: Match terms with the listed IDs.
-            type: array
-            items:
-              type: integer
-          - title: Term ID Taxonomy Query
-            description: Perform an advanced term query.
-            type: object
-            properties:
-              terms:
-                description: Term IDs.
-                type: array
-                items:
-                  type: integer
-                default: []
-              include_children:
-                description: Whether to include child terms in the terms limiting the result set.
-                type: boolean
-                default: false
-              operator:
-                description: Whether items must be assigned all or any of the specified terms.
-                type: string
-                enum:
-                - AND
-                - OR
-                default: OR
-            additionalProperties: false
-        description: Limit result set to items with specific terms assigned in the ufaq-category taxonomy.
-      - name: ufaq-category_exclude
-        in: query
-        schema:
-          type:
-          - object
-          - array
-          oneOf:
-          - title: Term ID List
-            description: Match terms with the listed IDs.
-            type: array
-            items:
-              type: integer
-          - title: Term ID Taxonomy Query
-            description: Perform an advanced term query.
-            type: object
-            properties:
-              terms:
-                description: Term IDs.
-                type: array
-                items:
-                  type: integer
-                default: []
-              include_children:
-                description: Whether to include child terms in the terms limiting the result set.
-                type: boolean
-                default: false
-            additionalProperties: false
-        description: Limit result set to items except those with specific terms assigned in the ufaq-category taxonomy.
-      - name: ufaq-tag
-        in: query
-        schema:
-          type:
-          - object
-          - array
-          oneOf:
-          - title: Term ID List
-            description: Match terms with the listed IDs.
-            type: array
-            items:
-              type: integer
-          - title: Term ID Taxonomy Query
-            description: Perform an advanced term query.
-            type: object
-            properties:
-              terms:
-                description: Term IDs.
-                type: array
-                items:
-                  type: integer
-                default: []
-              operator:
-                description: Whether items must be assigned all or any of the specified terms.
-                type: string
-                enum:
-                - AND
-                - OR
-                default: OR
-            additionalProperties: false
-        description: Limit result set to items with specific terms assigned in the ufaq-tag taxonomy.
-      - name: ufaq-tag_exclude
-        in: query
-        schema:
-          type:
-          - object
-          - array
-          oneOf:
-          - title: Term ID List
-            description: Match terms with the listed IDs.
-            type: array
-            items:
-              type: integer
-          - title: Term ID Taxonomy Query
-            description: Perform an advanced term query.
-            type: object
-            properties:
-              terms:
-                description: Term IDs.
-                type: array
-                items:
-                  type: integer
-                default: []
-            additionalProperties: false
-        description: Limit result set to items except those with specific terms assigned in the ufaq-tag taxonomy.
-  /wp/v2/ufaq/{id}:
+  /wp/v2/product/{id}:
     get:
-      operationId: getFaq
-      summary: Retrieve an FAQ entry
-      description: Retrieve a single FAQ entry by its numeric identifier.
+      operationId: getProduct
+      summary: Retrieve a product
+      description: Retrieve a single AeroFarms product by its numeric identifier.
       tags:
-      - FAQs
+      - Products
       responses:
         '200':
-          description: Retrieve an FAQ entry
+          description: Retrieve a product
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Faq'
+                $ref: '#/components/schemas/Product'
         '400':
           description: Invalid parameter(s) — rest_invalid_param.
           content:
@@ -414,22 +478,22 @@ paths:
         schema:
           type: integer
         description: Override the default excerpt length.
-  /wp/v2/ufaq-category:
+  /wp/v2/product_cat:
     get:
-      operationId: listFaqCategories
-      summary: List FAQ categories
-      description: Retrieve the FAQ category taxonomy terms. 8 terms at capture.
+      operationId: listProductCategories
+      summary: List product categories
+      description: Retrieve the product-category taxonomy terms. 3 terms at capture.
       tags:
-      - FAQs
+      - Product Taxonomy
       responses:
         '200':
-          description: List FAQ categories
+          description: List product categories
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/FaqCategory'
+                  $ref: '#/components/schemas/ProductCategory'
           headers:
             X-WP-Total: *id001
             X-WP-TotalPages: *id002
@@ -563,7 +627,7 @@ components:
             params:
               type: object
               description: Per-parameter validation messages, on rest_invalid_param.
-    Faq:
+    Product:
       type: object
       properties:
         date:
@@ -668,9 +732,6 @@ components:
             protected:
               description: Whether the content is protected with a password.
               type: boolean
-        author:
-          description: The ID for the author of the post.
-          type: integer
         excerpt:
           description: The excerpt for the post.
           type: object
@@ -1096,13 +1157,18 @@ components:
         template:
           description: The theme file to use to display the post.
           type: string
-        ufaq-category:
-          description: The terms assigned to the post in the ufaq-category taxonomy.
+        product_brand:
+          description: The terms assigned to the post in the product_brand taxonomy.
           type: array
           items:
             type: integer
-        ufaq-tag:
-          description: The terms assigned to the post in the ufaq-tag taxonomy.
+        product_cat:
+          description: The terms assigned to the post in the product_cat taxonomy.
+          type: array
+          items:
+            type: integer
+        product_tag:
+          description: The terms assigned to the post in the product_tag taxonomy.
           type: array
           items:
             type: integer
@@ -1110,8 +1176,8 @@ components:
           description: ACF field data
           type: object
           properties: []
-      title: ufaq
-    FaqCategory:
+      title: product
+    ProductCategory:
       type: object
       properties:
         id:
@@ -1137,7 +1203,7 @@ components:
           description: Type attribution for the term.
           type: string
           enum:
-          - ufaq-category
+          - product_cat
         parent:
           description: The parent term ID.
           type: integer
@@ -1145,8 +1211,11 @@ components:
           description: Meta fields.
           type: object
           properties: []
+        menu_order:
+          description: Menu order, used to custom sort the term.
+          type: integer
         acf:
           description: ACF field data
           type: object
           properties: []
-      title: ufaq-category
+      title: product_cat

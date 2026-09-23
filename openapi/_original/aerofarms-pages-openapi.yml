@@ -1,10 +1,12 @@
+# x-archived-from: aerofarms-pages-openapi.yml
+# x-archived-on: 2026-09-16
 openapi: 3.2.0
 info:
-  title: AeroFarms News API
+  title: AeroFarms Pages API
   version: v2
-  description: Public, unauthenticated read access to the AeroFarms news and press archive at www.aerofarms.com/news/ via
-    the WordPress core REST API. Verified live at 289 published posts on 2026-09-10. Anonymous access is read-only; the write
-    methods on these routes require WordPress authentication and are not part of the public surface.
+  description: Public, unauthenticated read access to the marketing and policy pages of www.aerofarms.com — About Us, How
+    We Grow, Our Microgreens, FlavorSpectrum, Store Locator, Commercial Partnerships, Careers, Contact, Terms and Conditions
+    and Privacy Policy. Verified live at 56 published pages on 2026-09-10.
   contact:
     name: AeroFarms
     url: https://www.aerofarms.com/contact/
@@ -18,37 +20,35 @@ servers:
 - url: https://www.aerofarms.com/wp-json
   description: AeroFarms WordPress REST API
 tags:
-- name: News
-  description: AeroFarms press releases, announcements and articles.
-- name: Comments
-  description: Approved reader comments and AeroFarms replies on news posts.
+- name: Pages
+  description: Static marketing and policy pages of the AeroFarms website.
 paths:
-  /wp/v2/posts:
+  /wp/v2/pages:
     get:
-      operationId: listNewsPosts
-      summary: List news posts
-      description: Retrieve a paginated collection of published AeroFarms news posts. 289 posts at capture.
+      operationId: listPages
+      summary: List pages
+      description: Retrieve a paginated collection of published AeroFarms website pages. 56 pages at capture.
       tags:
-      - News
+      - Pages
       responses:
         '200':
-          description: List news posts
+          description: List pages
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Post'
+                  $ref: '#/components/schemas/Page'
           headers:
-            X-WP-Total: &id001
+            X-WP-Total:
               description: Total number of records matching the query.
               schema:
                 type: integer
-            X-WP-TotalPages: &id002
+            X-WP-TotalPages:
               description: Total number of pages available at the current per_page.
               schema:
                 type: integer
-            Link: &id003
+            Link:
               description: RFC 8288 pagination links (rel="next" / rel="prev").
               schema:
                 type: string
@@ -93,69 +93,6 @@ paths:
           type: string
           format: date-time
         description: Limit response to posts published before a given ISO8601 compliant date.
-      - name: categories
-        in: query
-        schema:
-          type:
-          - object
-          - array
-          oneOf:
-          - title: Term ID List
-            description: Match terms with the listed IDs.
-            type: array
-            items:
-              type: integer
-          - title: Term ID Taxonomy Query
-            description: Perform an advanced term query.
-            type: object
-            properties:
-              terms:
-                description: Term IDs.
-                type: array
-                items:
-                  type: integer
-                default: []
-              include_children:
-                description: Whether to include child terms in the terms limiting the result set.
-                type: boolean
-                default: false
-              operator:
-                description: Whether items must be assigned all or any of the specified terms.
-                type: string
-                enum:
-                - AND
-                - OR
-                default: OR
-            additionalProperties: false
-        description: Limit result set to items with specific terms assigned in the categories taxonomy.
-      - name: categories_exclude
-        in: query
-        schema:
-          type:
-          - object
-          - array
-          oneOf:
-          - title: Term ID List
-            description: Match terms with the listed IDs.
-            type: array
-            items:
-              type: integer
-          - title: Term ID Taxonomy Query
-            description: Perform an advanced term query.
-            type: object
-            properties:
-              terms:
-                description: Term IDs.
-                type: array
-                items:
-                  type: integer
-                default: []
-              include_children:
-                description: Whether to include child terms in the terms limiting the result set.
-                type: boolean
-                default: false
-            additionalProperties: false
-        description: Limit result set to items except those with specific terms assigned in the categories taxonomy.
       - name: context
         in: query
         schema:
@@ -174,30 +111,6 @@ paths:
           items:
             type: integer
         description: Ensure result set excludes specific IDs.
-      - name: format
-        in: query
-        schema:
-          type: array
-          items:
-            enum:
-            - standard
-            - aside
-            - chat
-            - gallery
-            - link
-            - image
-            - quote
-            - status
-            - video
-            - audio
-            type: string
-        description: Limit result set to items assigned one or more given formats.
-      - name: ignore_sticky
-        in: query
-        schema:
-          type: boolean
-          default: true
-        description: Whether to ignore sticky posts or not.
       - name: include
         in: query
         schema:
@@ -206,6 +119,11 @@ paths:
           items:
             type: integer
         description: Limit result set to specific IDs.
+      - name: menu_order
+        in: query
+        schema:
+          type: integer
+        description: Limit result set to posts with a specific menu_order value.
       - name: modified_after
         in: query
         schema:
@@ -247,6 +165,7 @@ paths:
           - slug
           - include_slugs
           - title
+          - menu_order
           - rand
           - menu_order
           default: date
@@ -258,6 +177,22 @@ paths:
           default: 1
           minimum: 1
         description: Current page of the collection.
+      - name: parent
+        in: query
+        schema:
+          type: array
+          default: []
+          items:
+            type: integer
+        description: Limit result set to items with particular parent IDs.
+      - name: parent_exclude
+        in: query
+        schema:
+          type: array
+          default: []
+          items:
+            type: integer
+        description: Limit result set to all items except those of a particular parent ID.
       - name: per_page
         in: query
         schema:
@@ -329,88 +264,20 @@ paths:
             - any
             type: string
         description: Limit result set to posts assigned one or more statuses.
-      - name: sticky
-        in: query
-        schema:
-          type: boolean
-        description: Limit result set to items that are sticky.
-      - name: tags
-        in: query
-        schema:
-          type:
-          - object
-          - array
-          oneOf:
-          - title: Term ID List
-            description: Match terms with the listed IDs.
-            type: array
-            items:
-              type: integer
-          - title: Term ID Taxonomy Query
-            description: Perform an advanced term query.
-            type: object
-            properties:
-              terms:
-                description: Term IDs.
-                type: array
-                items:
-                  type: integer
-                default: []
-              operator:
-                description: Whether items must be assigned all or any of the specified terms.
-                type: string
-                enum:
-                - AND
-                - OR
-                default: OR
-            additionalProperties: false
-        description: Limit result set to items with specific terms assigned in the tags taxonomy.
-      - name: tags_exclude
-        in: query
-        schema:
-          type:
-          - object
-          - array
-          oneOf:
-          - title: Term ID List
-            description: Match terms with the listed IDs.
-            type: array
-            items:
-              type: integer
-          - title: Term ID Taxonomy Query
-            description: Perform an advanced term query.
-            type: object
-            properties:
-              terms:
-                description: Term IDs.
-                type: array
-                items:
-                  type: integer
-                default: []
-            additionalProperties: false
-        description: Limit result set to items except those with specific terms assigned in the tags taxonomy.
-      - name: tax_relation
-        in: query
-        schema:
-          type: string
-          enum:
-          - AND
-          - OR
-        description: Limit result set based on relationship between multiple taxonomies.
-  /wp/v2/posts/{id}:
+  /wp/v2/pages/{id}:
     get:
-      operationId: getNewsPost
-      summary: Retrieve a news post
-      description: Retrieve a single AeroFarms news post by its numeric identifier.
+      operationId: getPage
+      summary: Retrieve a page
+      description: Retrieve a single AeroFarms page by its numeric identifier.
       tags:
-      - News
+      - Pages
       responses:
         '200':
-          description: Retrieve a news post
+          description: Retrieve a page
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Post'
+                $ref: '#/components/schemas/Page'
         '400':
           description: Invalid parameter(s) — rest_invalid_param.
           content:
@@ -445,182 +312,6 @@ paths:
         schema:
           type: integer
         description: Override the default excerpt length.
-  /wp/v2/comments:
-    get:
-      operationId: listComments
-      summary: List comments
-      description: Retrieve approved comments on AeroFarms news posts, including AeroFarms' own replies. 16 comments at capture.
-      tags:
-      - Comments
-      responses:
-        '200':
-          description: List comments
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Comment'
-          headers:
-            X-WP-Total: *id001
-            X-WP-TotalPages: *id002
-            Link: *id003
-        '400':
-          description: Invalid parameter(s) — rest_invalid_param.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-        '404':
-          description: No such route or resource — rest_no_route / rest_*_invalid_id.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-      parameters:
-      - name: after
-        in: query
-        schema:
-          type: string
-          format: date-time
-        description: Limit response to comments published after a given ISO8601 compliant date.
-      - name: author
-        in: query
-        schema:
-          type: array
-          items:
-            type: integer
-        description: Limit result set to comments assigned to specific user IDs. Requires authorization.
-      - name: author_email
-        in: query
-        schema:
-          type: string
-          default: null
-          format: email
-        description: Limit result set to that from a specific author email. Requires authorization.
-      - name: author_exclude
-        in: query
-        schema:
-          type: array
-          items:
-            type: integer
-        description: Ensure result set excludes comments assigned to specific user IDs. Requires authorization.
-      - name: before
-        in: query
-        schema:
-          type: string
-          format: date-time
-        description: Limit response to comments published before a given ISO8601 compliant date.
-      - name: context
-        in: query
-        schema:
-          type: string
-          enum:
-          - view
-          - embed
-          - edit
-          default: view
-        description: Scope under which the request is made; determines fields present in response.
-      - name: exclude
-        in: query
-        schema:
-          type: array
-          default: []
-          items:
-            type: integer
-        description: Ensure result set excludes specific IDs.
-      - name: include
-        in: query
-        schema:
-          type: array
-          default: []
-          items:
-            type: integer
-        description: Limit result set to specific IDs.
-      - name: offset
-        in: query
-        schema:
-          type: integer
-        description: Offset the result set by a specific number of items.
-      - name: order
-        in: query
-        schema:
-          type: string
-          enum:
-          - asc
-          - desc
-          default: desc
-        description: Order sort attribute ascending or descending.
-      - name: orderby
-        in: query
-        schema:
-          type: string
-          enum:
-          - date
-          - date_gmt
-          - id
-          - include
-          - post
-          - parent
-          - type
-          default: date_gmt
-        description: Sort collection by comment attribute.
-      - name: page
-        in: query
-        schema:
-          type: integer
-          default: 1
-          minimum: 1
-        description: Current page of the collection.
-      - name: parent
-        in: query
-        schema:
-          type: array
-          default: []
-          items:
-            type: integer
-        description: Limit result set to comments of specific parent IDs.
-      - name: parent_exclude
-        in: query
-        schema:
-          type: array
-          default: []
-          items:
-            type: integer
-        description: Ensure result set excludes specific parent IDs.
-      - name: per_page
-        in: query
-        schema:
-          type: integer
-          default: 10
-          minimum: 1
-          maximum: 100
-        description: Maximum number of items to be returned in result set.
-      - name: post
-        in: query
-        schema:
-          type: array
-          default: []
-          items:
-            type: integer
-        description: Limit result set to comments assigned to specific post IDs.
-      - name: search
-        in: query
-        schema:
-          type: string
-        description: Limit results to those matching a string.
-      - name: status
-        in: query
-        schema:
-          type: string
-          default: approve
-        description: Limit result set to comments assigned a specific status. Requires authorization.
-      - name: type
-        in: query
-        schema:
-          type: string
-          default: comment
-        description: Limit result set to comments assigned a specific type. Requires authorization.
 components:
   schemas:
     Error:
@@ -643,7 +334,7 @@ components:
             params:
               type: object
               description: Per-parameter validation messages, on rest_invalid_param.
-    Post:
+    Page:
       type: object
       properties:
         date:
@@ -722,6 +413,9 @@ components:
           type: array
           items:
             type: string
+        parent:
+          description: The ID for the parent of the post.
+          type: integer
         title:
           description: The title for the post.
           type: object
@@ -779,20 +473,9 @@ components:
           enum:
           - open
           - closed
-        format:
-          description: The format for the post.
-          type: string
-          enum:
-          - standard
-          - aside
-          - chat
-          - gallery
-          - link
-          - image
-          - quote
-          - status
-          - video
-          - audio
+        menu_order:
+          description: The order of the post in relation to other posts.
+          type: integer
         meta:
           description: Meta fields.
           type: object
@@ -802,21 +485,6 @@ components:
               title: ''
               description: ''
               default: false
-            _yoast_wpseo_focuskw:
-              type: string
-              title: ''
-              description: ''
-              default: ''
-            _yoast_wpseo_title:
-              type: string
-              title: ''
-              description: ''
-              default: ''
-            _yoast_wpseo_metadesc:
-              type: string
-              title: ''
-              description: ''
-              default: ''
             _uag_custom_page_level_css:
               type: string
               title: ''
@@ -1207,121 +875,11 @@ components:
               title: ''
               description: ''
               default: ''
-        sticky:
-          description: Whether or not the post should be treated as sticky.
-          type: boolean
         template:
           description: The theme file to use to display the post.
           type: string
-        categories:
-          description: The terms assigned to the post in the category taxonomy.
-          type: array
-          items:
-            type: integer
-        tags:
-          description: The terms assigned to the post in the post_tag taxonomy.
-          type: array
-          items:
-            type: integer
         acf:
           description: ACF field data
           type: object
           properties: []
-      title: post
-    Comment:
-      type: object
-      properties:
-        id:
-          description: Unique identifier for the comment.
-          type: integer
-        author:
-          description: The ID of the user object, if author was a user.
-          type: integer
-        author_email:
-          description: Email address for the comment author.
-          type: string
-          format: email
-        author_ip:
-          description: IP address for the comment author.
-          type: string
-          format: ip
-        author_name:
-          description: Display name for the comment author.
-          type: string
-        author_url:
-          description: URL for the comment author.
-          type: string
-          format: uri
-        author_user_agent:
-          description: User agent for the comment author.
-          type: string
-        content:
-          description: The content for the comment.
-          type: object
-          properties:
-            raw:
-              description: Content for the comment, as it exists in the database.
-              type: string
-            rendered:
-              description: HTML content for the comment, transformed for display.
-              type: string
-        date:
-          description: The date the comment was published, in the site's timezone.
-          type: string
-          format: date-time
-        date_gmt:
-          description: The date the comment was published, as GMT.
-          type: string
-          format: date-time
-        link:
-          description: URL to the comment.
-          type: string
-          format: uri
-        parent:
-          description: The ID for the parent of the comment.
-          type: integer
-          default: 0
-        post:
-          description: The ID of the associated post object.
-          type: integer
-          default: 0
-        status:
-          description: State of the comment.
-          type: string
-        type:
-          description: Type of the comment.
-          type: string
-          default: comment
-        author_avatar_urls:
-          description: Avatar URLs for the comment author.
-          type: object
-          properties:
-            '24':
-              description: Avatar URL with image size of 24 pixels.
-              type: string
-              format: uri
-            '48':
-              description: Avatar URL with image size of 48 pixels.
-              type: string
-              format: uri
-            '96':
-              description: Avatar URL with image size of 96 pixels.
-              type: string
-              format: uri
-        meta:
-          description: Meta fields.
-          type: object
-          properties:
-            _wp_note_status:
-              type: string
-              title: ''
-              description: Note resolution status
-              default: ''
-              enum:
-              - resolved
-              - reopen
-        acf:
-          description: ACF field data
-          type: object
-          properties: []
-      title: comment
+      title: page

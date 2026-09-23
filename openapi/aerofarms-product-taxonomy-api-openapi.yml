@@ -1,41 +1,38 @@
 openapi: 3.2.0
 info:
-  title: AeroFarms Search API
+  title: AeroFarms Products Product Taxonomy API
   version: v2
-  description: Public, unauthenticated cross-content search over www.aerofarms.com — news posts, pages, products and FAQ entries
-    — returning lightweight id / title / url / type / subtype records. Verified live at 371 searchable objects on 2026-09-10.
+  description: Public, unauthenticated read access to the AeroFarms microgreens product catalog as WordPress product objects — micro broccoli, micro arugula, micro wasabi mustard, micro rainbow mix, micro spicy mix and the rest of the FlavorSpectrum range. Verified live at 8 published products in 3 product categories on 2026-09-10.
   contact:
     name: AeroFarms
     url: https://www.aerofarms.com/contact/
     email: info@aerofarms.com
   x-derived-from: https://www.aerofarms.com/wp-json/ route index + per-route HTTP OPTIONS schema documents
   x-derived-on: '2026-09-10'
-  x-api-evangelist-note: Third-party profile. AeroFarms publishes no developer program; this documents the anonymously readable
-    REST surface behind www.aerofarms.com. Every path, parameter and schema here was read from the server's own published
-    route index and OPTIONS documents on 2026-09-10 — nothing is invented.
+  x-api-evangelist-note: Third-party profile. AeroFarms publishes no developer program; this documents the anonymously readable REST surface behind www.aerofarms.com. Every path, parameter and schema here was read from the server's own published route index and OPTIONS documents on 2026-09-10 — nothing is invented.
 servers:
 - url: https://www.aerofarms.com/wp-json
   description: AeroFarms WordPress REST API
 tags:
-- name: Search
-  description: Cross-content search over the AeroFarms website.
+- name: Product Taxonomy
+  description: Product category, brand and tag taxonomies.
 paths:
-  /wp/v2/search:
+  /wp/v2/product_cat:
     get:
-      operationId: searchSiteContent
-      summary: Search site content
-      description: Search across AeroFarms news posts, pages, products and FAQ entries. 371 searchable objects at capture.
+      operationId: listProductCategories
+      summary: List product categories
+      description: Retrieve the product-category taxonomy terms. 3 terms at capture.
       tags:
-      - Search
+      - Product Taxonomy
       responses:
         '200':
-          description: Search site content
+          description: List product categories
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/SearchResult'
+                  $ref: '#/components/schemas/ProductCategory'
           headers:
             X-WP-Total:
               description: Total number of records matching the query.
@@ -69,6 +66,7 @@ paths:
           enum:
           - view
           - embed
+          - edit
           default: view
         description: Scope under which the request is made; determines fields present in response.
       - name: exclude
@@ -79,6 +77,12 @@ paths:
           items:
             type: integer
         description: Ensure result set excludes specific IDs.
+      - name: hide_empty
+        in: query
+        schema:
+          type: boolean
+          default: false
+        description: Whether to hide terms not assigned to any posts.
       - name: include
         in: query
         schema:
@@ -87,6 +91,30 @@ paths:
           items:
             type: integer
         description: Limit result set to specific IDs.
+      - name: order
+        in: query
+        schema:
+          type: string
+          enum:
+          - asc
+          - desc
+          default: asc
+        description: Order sort attribute ascending or descending.
+      - name: orderby
+        in: query
+        schema:
+          type: string
+          enum:
+          - id
+          - include
+          - name
+          - slug
+          - include_slugs
+          - term_group
+          - description
+          - count
+          default: name
+        description: Sort collection by term attribute.
       - name: page
         in: query
         schema:
@@ -94,6 +122,11 @@ paths:
           default: 1
           minimum: 1
         description: Current page of the collection.
+      - name: parent
+        in: query
+        schema:
+          type: integer
+        description: Limit result set to terms assigned to a specific parent.
       - name: per_page
         in: query
         schema:
@@ -102,43 +135,24 @@ paths:
           minimum: 1
           maximum: 100
         description: Maximum number of items to be returned in result set.
+      - name: post
+        in: query
+        schema:
+          type: integer
+          default: null
+        description: Limit result set to terms assigned to a specific post.
       - name: search
         in: query
         schema:
           type: string
         description: Limit results to those matching a string.
-      - name: subtype
+      - name: slug
         in: query
         schema:
           type: array
-          default: any
           items:
-            enum:
-            - post
-            - page
-            - product
-            - ufaq
-            - astra-advanced-hook
-            - category
-            - post_tag
-            - product_brand
-            - product_cat
-            - product_tag
-            - ufaq-category
-            - ufaq-tag
-            - any
             type: string
-        description: Limit results to items of one or more object subtypes.
-      - name: type
-        in: query
-        schema:
-          type: string
-          enum:
-          - post
-          - term
-          - post-format
-          default: post
-        description: Limit results to items of an object type.
+        description: Limit result set to terms with one or more specific slugs.
 components:
   schemas:
     Error:
@@ -161,42 +175,45 @@ components:
             params:
               type: object
               description: Per-parameter validation messages, on rest_invalid_param.
-    SearchResult:
-      title: search-result
+    ProductCategory:
       type: object
       properties:
         id:
-          description: Unique identifier for the object.
-          type:
-          - integer
-          - string
-        title:
-          description: The title for the object.
+          description: Unique identifier for the term.
+          type: integer
+        count:
+          description: Number of published posts for the term.
+          type: integer
+        description:
+          description: HTML description of the term.
           type: string
-        url:
-          description: URL to the object.
+        link:
+          description: URL of the term.
           type: string
           format: uri
-        type:
-          description: Object type.
+        name:
+          description: HTML title for the term.
+          type: string
+        slug:
+          description: An alphanumeric identifier for the term unique to its type.
+          type: string
+        taxonomy:
+          description: Type attribution for the term.
           type: string
           enum:
-          - post
-          - term
-          - post-format
-        subtype:
-          description: Object subtype.
-          type: string
-          enum:
-          - post
-          - page
-          - product
-          - ufaq
-          - astra-advanced-hook
-          - category
-          - post_tag
-          - product_brand
           - product_cat
-          - product_tag
-          - ufaq-category
-          - ufaq-tag
+        parent:
+          description: The parent term ID.
+          type: integer
+        meta:
+          description: Meta fields.
+          type: object
+          properties: []
+        menu_order:
+          description: Menu order, used to custom sort the term.
+          type: integer
+        acf:
+          description: ACF field data
+          type: object
+          properties: []
+      title: product_cat

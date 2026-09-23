@@ -1,0 +1,323 @@
+openapi: 3.2.0
+info:
+  title: AeroFarms News Comments API
+  version: v2
+  description: Public, unauthenticated read access to the AeroFarms news and press archive at www.aerofarms.com/news/ via the WordPress core REST API. Verified live at 289 published posts on 2026-09-10. Anonymous access is read-only; the write methods on these routes require WordPress authentication and are not part of the public surface.
+  contact:
+    name: AeroFarms
+    url: https://www.aerofarms.com/contact/
+    email: info@aerofarms.com
+  x-derived-from: https://www.aerofarms.com/wp-json/ route index + per-route HTTP OPTIONS schema documents
+  x-derived-on: '2026-09-10'
+  x-api-evangelist-note: Third-party profile. AeroFarms publishes no developer program; this documents the anonymously readable REST surface behind www.aerofarms.com. Every path, parameter and schema here was read from the server's own published route index and OPTIONS documents on 2026-09-10 — nothing is invented.
+servers:
+- url: https://www.aerofarms.com/wp-json
+  description: AeroFarms WordPress REST API
+tags:
+- name: Comments
+  description: Approved reader comments and AeroFarms replies on news posts.
+paths:
+  /wp/v2/comments:
+    get:
+      operationId: listComments
+      summary: List comments
+      description: Retrieve approved comments on AeroFarms news posts, including AeroFarms' own replies. 16 comments at capture.
+      tags:
+      - Comments
+      responses:
+        '200':
+          description: List comments
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Comment'
+          headers:
+            X-WP-Total:
+              description: Total number of records matching the query.
+              schema:
+                type: integer
+            X-WP-TotalPages:
+              description: Total number of pages available at the current per_page.
+              schema:
+                type: integer
+            Link:
+              description: RFC 8288 pagination links (rel="next" / rel="prev").
+              schema:
+                type: string
+        '400':
+          description: Invalid parameter(s) — rest_invalid_param.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: No such route or resource — rest_no_route / rest_*_invalid_id.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      parameters:
+      - name: after
+        in: query
+        schema:
+          type: string
+          format: date-time
+        description: Limit response to comments published after a given ISO8601 compliant date.
+      - name: author
+        in: query
+        schema:
+          type: array
+          items:
+            type: integer
+        description: Limit result set to comments assigned to specific user IDs. Requires authorization.
+      - name: author_email
+        in: query
+        schema:
+          type: string
+          default: null
+          format: email
+        description: Limit result set to that from a specific author email. Requires authorization.
+      - name: author_exclude
+        in: query
+        schema:
+          type: array
+          items:
+            type: integer
+        description: Ensure result set excludes comments assigned to specific user IDs. Requires authorization.
+      - name: before
+        in: query
+        schema:
+          type: string
+          format: date-time
+        description: Limit response to comments published before a given ISO8601 compliant date.
+      - name: context
+        in: query
+        schema:
+          type: string
+          enum:
+          - view
+          - embed
+          - edit
+          default: view
+        description: Scope under which the request is made; determines fields present in response.
+      - name: exclude
+        in: query
+        schema:
+          type: array
+          default: []
+          items:
+            type: integer
+        description: Ensure result set excludes specific IDs.
+      - name: include
+        in: query
+        schema:
+          type: array
+          default: []
+          items:
+            type: integer
+        description: Limit result set to specific IDs.
+      - name: offset
+        in: query
+        schema:
+          type: integer
+        description: Offset the result set by a specific number of items.
+      - name: order
+        in: query
+        schema:
+          type: string
+          enum:
+          - asc
+          - desc
+          default: desc
+        description: Order sort attribute ascending or descending.
+      - name: orderby
+        in: query
+        schema:
+          type: string
+          enum:
+          - date
+          - date_gmt
+          - id
+          - include
+          - post
+          - parent
+          - type
+          default: date_gmt
+        description: Sort collection by comment attribute.
+      - name: page
+        in: query
+        schema:
+          type: integer
+          default: 1
+          minimum: 1
+        description: Current page of the collection.
+      - name: parent
+        in: query
+        schema:
+          type: array
+          default: []
+          items:
+            type: integer
+        description: Limit result set to comments of specific parent IDs.
+      - name: parent_exclude
+        in: query
+        schema:
+          type: array
+          default: []
+          items:
+            type: integer
+        description: Ensure result set excludes specific parent IDs.
+      - name: per_page
+        in: query
+        schema:
+          type: integer
+          default: 10
+          minimum: 1
+          maximum: 100
+        description: Maximum number of items to be returned in result set.
+      - name: post
+        in: query
+        schema:
+          type: array
+          default: []
+          items:
+            type: integer
+        description: Limit result set to comments assigned to specific post IDs.
+      - name: search
+        in: query
+        schema:
+          type: string
+        description: Limit results to those matching a string.
+      - name: status
+        in: query
+        schema:
+          type: string
+          default: approve
+        description: Limit result set to comments assigned a specific status. Requires authorization.
+      - name: type
+        in: query
+        schema:
+          type: string
+          default: comment
+        description: Limit result set to comments assigned a specific type. Requires authorization.
+components:
+  schemas:
+    Comment:
+      type: object
+      properties:
+        id:
+          description: Unique identifier for the comment.
+          type: integer
+        author:
+          description: The ID of the user object, if author was a user.
+          type: integer
+        author_email:
+          description: Email address for the comment author.
+          type: string
+          format: email
+        author_ip:
+          description: IP address for the comment author.
+          type: string
+          format: ip
+        author_name:
+          description: Display name for the comment author.
+          type: string
+        author_url:
+          description: URL for the comment author.
+          type: string
+          format: uri
+        author_user_agent:
+          description: User agent for the comment author.
+          type: string
+        content:
+          description: The content for the comment.
+          type: object
+          properties:
+            raw:
+              description: Content for the comment, as it exists in the database.
+              type: string
+            rendered:
+              description: HTML content for the comment, transformed for display.
+              type: string
+        date:
+          description: The date the comment was published, in the site's timezone.
+          type: string
+          format: date-time
+        date_gmt:
+          description: The date the comment was published, as GMT.
+          type: string
+          format: date-time
+        link:
+          description: URL to the comment.
+          type: string
+          format: uri
+        parent:
+          description: The ID for the parent of the comment.
+          type: integer
+          default: 0
+        post:
+          description: The ID of the associated post object.
+          type: integer
+          default: 0
+        status:
+          description: State of the comment.
+          type: string
+        type:
+          description: Type of the comment.
+          type: string
+          default: comment
+        author_avatar_urls:
+          description: Avatar URLs for the comment author.
+          type: object
+          properties:
+            '24':
+              description: Avatar URL with image size of 24 pixels.
+              type: string
+              format: uri
+            '48':
+              description: Avatar URL with image size of 48 pixels.
+              type: string
+              format: uri
+            '96':
+              description: Avatar URL with image size of 96 pixels.
+              type: string
+              format: uri
+        meta:
+          description: Meta fields.
+          type: object
+          properties:
+            _wp_note_status:
+              type: string
+              title: ''
+              description: Note resolution status
+              default: ''
+              enum:
+              - resolved
+              - reopen
+        acf:
+          description: ACF field data
+          type: object
+          properties: []
+      title: comment
+    Error:
+      title: WP REST error
+      type: object
+      description: The WordPress REST error envelope returned on every non-2xx response, observed live 2026-09-10.
+      properties:
+        code:
+          type: string
+          description: Machine-readable error code, e.g. rest_forbidden, rest_no_route, rest_invalid_param.
+        message:
+          type: string
+          description: Human-readable message.
+        data:
+          type: object
+          properties:
+            status:
+              type: integer
+              description: HTTP status code repeated in the body.
+            params:
+              type: object
+              description: Per-parameter validation messages, on rest_invalid_param.

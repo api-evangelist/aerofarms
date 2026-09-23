@@ -1,0 +1,52 @@
+{
+  "provider": "aerofarms",
+  "sources": [
+    "_original/aerofarms-discovery-openapi.yml",
+    "_original/aerofarms-faq-openapi.yml",
+    "_original/aerofarms-media-openapi.yml",
+    "_original/aerofarms-news-openapi.yml",
+    "_original/aerofarms-pages-openapi.yml",
+    "_original/aerofarms-products-openapi.yml",
+    "_original/aerofarms-search-openapi.yml",
+    "_original/aerofarms-store-openapi.yml",
+    "_original/aerofarms-taxonomy-openapi.yml"
+  ],
+  "outputs": [
+    "aerofarms-discovery-api-openapi.yml",
+    "aerofarms-faqs-api-openapi.yml",
+    "aerofarms-media-api-openapi.yml",
+    "aerofarms-comments-api-openapi.yml",
+    "aerofarms-news-api-openapi.yml",
+    "aerofarms-pages-api-openapi.yml",
+    "aerofarms-product-taxonomy-api-openapi.yml",
+    "aerofarms-products-api-openapi.yml",
+    "aerofarms-search-api-openapi.yml",
+    "aerofarms-cart-api-openapi.yml",
+    "aerofarms-store-api-openapi.yml",
+    "aerofarms-taxonomy-api-openapi.yml"
+  ],
+  "archived": [
+    "deleted 1 superseded output(s) from the previous generation"
+  ],
+  "errors": [],
+  "warnings": [],
+  "notes": [
+    "sourced from openapi/_original/ (9 archived document(s)); previously refined output at the top level was skipped rather than re-split",
+    "superseded outputs removed: aerofarms-fa-qs-api-openapi.yml",
+    "apis.yml register: written (+1 apis, 13 total)"
+  ],
+  "skipped": [
+    "aerofarms-cart-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "aerofarms-comments-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "aerofarms-discovery-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "aerofarms-fa-qs-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "aerofarms-media-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "aerofarms-news-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "aerofarms-pages-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "aerofarms-product-taxonomy-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "aerofarms-products-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "aerofarms-search-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "aerofarms-store-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "aerofarms-taxonomy-api-openapi.yml: previously refined output, superseded by openapi/_original/"
+  ]
+}

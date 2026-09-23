@@ -1,45 +1,38 @@
 openapi: 3.2.0
 info:
-  title: AeroFarms Media API
+  title: AeroFarms Pages API
   version: v2
-  description: Public, unauthenticated read access to the AeroFarms media library — farm and product photography, FlavorSpectrum
-    imagery, press assets and packaging shots, each with its generated size variants and source URLs. Verified live at 5,605
-    attachments on 2026-09-10.
+  description: Public, unauthenticated read access to the marketing and policy pages of www.aerofarms.com — About Us, How We Grow, Our Microgreens, FlavorSpectrum, Store Locator, Commercial Partnerships, Careers, Contact, Terms and Conditions and Privacy Policy. Verified live at 56 published pages on 2026-09-10.
   contact:
     name: AeroFarms
     url: https://www.aerofarms.com/contact/
     email: info@aerofarms.com
   x-derived-from: https://www.aerofarms.com/wp-json/ route index + per-route HTTP OPTIONS schema documents
   x-derived-on: '2026-09-10'
-  x-api-evangelist-note: Third-party profile. AeroFarms publishes no developer program; this documents the anonymously readable
-    REST surface behind www.aerofarms.com. Every path, parameter and schema here was read from the server's own published
-    route index and OPTIONS documents on 2026-09-10 — nothing is invented.
-  x-surface-note: 'The single-attachment route /wp/v2/media/{id} is registered by WordPress but is NOT reachable on this site:
-    a Redirection plugin rule captures /wp-json/wp/v2/media/* and redirects it to https://www.aerofarms.com/media-contact-form/
-    (verified 2026-09-10 on ids 30450 and 29403, GET and OPTIONS alike). It is omitted here rather than described as callable.'
+  x-api-evangelist-note: Third-party profile. AeroFarms publishes no developer program; this documents the anonymously readable REST surface behind www.aerofarms.com. Every path, parameter and schema here was read from the server's own published route index and OPTIONS documents on 2026-09-10 — nothing is invented.
 servers:
 - url: https://www.aerofarms.com/wp-json
   description: AeroFarms WordPress REST API
 tags:
-- name: Media
-  description: AeroFarms image and document library with size variants.
+- name: Pages
+  description: Static marketing and policy pages of the AeroFarms website.
 paths:
-  /wp/v2/media:
+  /wp/v2/pages:
     get:
-      operationId: listMedia
-      summary: List media
-      description: Retrieve a paginated collection of AeroFarms media attachments. 5,605 attachments at capture.
+      operationId: listPages
+      summary: List pages
+      description: Retrieve a paginated collection of published AeroFarms website pages. 56 pages at capture.
       tags:
-      - Media
+      - Pages
       responses:
         '200':
-          description: List media
+          description: List pages
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/MediaItem'
+                  $ref: '#/components/schemas/Page'
           headers:
             X-WP-Total:
               description: Total number of records matching the query.
@@ -120,28 +113,11 @@ paths:
           items:
             type: integer
         description: Limit result set to specific IDs.
-      - name: media_type
+      - name: menu_order
         in: query
         schema:
-          type: array
-          default: null
-          items:
-            type: string
-            enum:
-            - image
-            - video
-            - text
-            - application
-            - audio
-        description: Limit result set to attachments of a particular media type or media types.
-      - name: mime_type
-        in: query
-        schema:
-          type: array
-          default: null
-          items:
-            type: string
-        description: Limit result set to attachments of a particular MIME type or MIME types.
+          type: integer
+        description: Limit result set to posts with a specific menu_order value.
       - name: modified_after
         in: query
         schema:
@@ -183,6 +159,9 @@ paths:
           - slug
           - include_slugs
           - title
+          - menu_order
+          - rand
+          - menu_order
           default: date
         description: Sort collection by post attribute.
       - name: page
@@ -251,14 +230,82 @@ paths:
         in: query
         schema:
           type: array
-          default: inherit
+          default: publish
           items:
             enum:
-            - inherit
+            - publish
+            - future
+            - draft
+            - pending
             - private
             - trash
+            - auto-draft
+            - inherit
+            - request-pending
+            - request-confirmed
+            - request-failed
+            - request-completed
+            - acf-disabled
+            - wc-pending
+            - wc-processing
+            - wc-on-hold
+            - wc-completed
+            - wc-cancelled
+            - wc-refunded
+            - wc-failed
+            - wc-checkout-draft
+            - hidden
+            - any
             type: string
         description: Limit result set to posts assigned one or more statuses.
+  /wp/v2/pages/{id}:
+    get:
+      operationId: getPage
+      summary: Retrieve a page
+      description: Retrieve a single AeroFarms page by its numeric identifier.
+      tags:
+      - Pages
+      responses:
+        '200':
+          description: Retrieve a page
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Page'
+        '400':
+          description: Invalid parameter(s) — rest_invalid_param.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: No such route or resource — rest_no_route / rest_*_invalid_id.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: Unique identifier for the resource.
+        schema:
+          type: integer
+      - name: context
+        in: query
+        schema:
+          type: string
+          enum:
+          - view
+          - embed
+          - edit
+          default: view
+        description: Scope under which the request is made; determines fields present in response.
+      - name: excerpt_length
+        in: query
+        schema:
+          type: integer
+        description: Override the default excerpt length.
 components:
   schemas:
     Error:
@@ -281,8 +328,7 @@ components:
             params:
               type: object
               description: Per-parameter validation messages, on rest_invalid_param.
-    MediaItem:
-      title: attachment
+    Page:
       type: object
       properties:
         date:
@@ -347,6 +393,9 @@ components:
         type:
           description: Type of post.
           type: string
+        password:
+          description: A password to protect access to the content and excerpt.
+          type: string
         permalink_template:
           description: Permalink template for the post.
           type: string
@@ -358,6 +407,9 @@ components:
           type: array
           items:
             type: string
+        parent:
+          description: The ID for the parent of the post.
+          type: integer
         title:
           description: The title for the post.
           type: object
@@ -368,9 +420,38 @@ components:
             rendered:
               description: HTML title for the post, transformed for display.
               type: string
+        content:
+          description: The content for the post.
+          type: object
+          properties:
+            raw:
+              description: Content for the post, as it exists in the database.
+              type: string
+            rendered:
+              description: HTML content for the post, transformed for display.
+              type: string
+            block_version:
+              description: Version of the content block format used by the post.
+              type: integer
+            protected:
+              description: Whether the content is protected with a password.
+              type: boolean
         author:
           description: The ID for the author of the post.
           type: integer
+        excerpt:
+          description: The excerpt for the post.
+          type: object
+          properties:
+            raw:
+              description: Excerpt for the post, as it exists in the database.
+              type: string
+            rendered:
+              description: HTML excerpt for the post, transformed for display.
+              type: string
+            protected:
+              description: Whether the excerpt is protected with a password.
+              type: boolean
         featured_media:
           description: The ID of the featured media for the post.
           type: integer
@@ -386,6 +467,9 @@ components:
           enum:
           - open
           - closed
+        menu_order:
+          description: The order of the post in relation to other posts.
+          type: integer
         meta:
           description: Meta fields.
           type: object
@@ -780,6 +864,11 @@ components:
                       type: string
                   additionalProperties: false
               additionalProperties: false
+            footnotes:
+              type: string
+              title: ''
+              description: ''
+              default: ''
         template:
           description: The theme file to use to display the post.
           type: string
@@ -787,59 +876,4 @@ components:
           description: ACF field data
           type: object
           properties: []
-        alt_text:
-          description: Alternative text to display when attachment is not displayed.
-          type: string
-        caption:
-          description: The attachment caption.
-          type: object
-          properties:
-            raw:
-              description: Caption for the attachment, as it exists in the database.
-              type: string
-            rendered:
-              description: HTML caption for the attachment, transformed for display.
-              type: string
-        description:
-          description: The attachment description.
-          type: object
-          properties:
-            raw:
-              description: Description for the attachment, as it exists in the database.
-              type: string
-            rendered:
-              description: HTML description for the attachment, transformed for display.
-              type: string
-        media_type:
-          description: Attachment type.
-          type: string
-          enum:
-          - image
-          - file
-        mime_type:
-          description: The attachment MIME type.
-          type: string
-        media_details:
-          description: Details about the media file, specific to its type.
-          type: object
-        post:
-          description: The ID for the associated post of the attachment.
-          type: integer
-        source_url:
-          description: URL to the original attachment file.
-          type: string
-          format: uri
-        missing_image_sizes:
-          description: List of the missing image sizes of the attachment.
-          type: array
-          items:
-            type: string
-        filename:
-          description: Original attachment file name.
-          type: string
-        filesize:
-          description: Attachment file size in bytes.
-          type: integer
-        exif_orientation:
-          description: EXIF orientation value. Values 1-8 follow the EXIF specification, where 1 means no rotation needed.
-          type: integer
+      title: page

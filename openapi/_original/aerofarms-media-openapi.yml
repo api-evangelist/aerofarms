@@ -1,0 +1,847 @@
+# x-archived-from: aerofarms-media-openapi.yml
+# x-archived-on: 2026-09-16
+openapi: 3.2.0
+info:
+  title: AeroFarms Media API
+  version: v2
+  description: Public, unauthenticated read access to the AeroFarms media library — farm and product photography, FlavorSpectrum
+    imagery, press assets and packaging shots, each with its generated size variants and source URLs. Verified live at 5,605
+    attachments on 2026-09-10.
+  contact:
+    name: AeroFarms
+    url: https://www.aerofarms.com/contact/
+    email: info@aerofarms.com
+  x-derived-from: https://www.aerofarms.com/wp-json/ route index + per-route HTTP OPTIONS schema documents
+  x-derived-on: '2026-09-10'
+  x-api-evangelist-note: Third-party profile. AeroFarms publishes no developer program; this documents the anonymously readable
+    REST surface behind www.aerofarms.com. Every path, parameter and schema here was read from the server's own published
+    route index and OPTIONS documents on 2026-09-10 — nothing is invented.
+  x-surface-note: 'The single-attachment route /wp/v2/media/{id} is registered by WordPress but is NOT reachable on this site:
+    a Redirection plugin rule captures /wp-json/wp/v2/media/* and redirects it to https://www.aerofarms.com/media-contact-form/
+    (verified 2026-09-10 on ids 30450 and 29403, GET and OPTIONS alike). It is omitted here rather than described as callable.'
+servers:
+- url: https://www.aerofarms.com/wp-json
+  description: AeroFarms WordPress REST API
+tags:
+- name: Media
+  description: AeroFarms image and document library with size variants.
+paths:
+  /wp/v2/media:
+    get:
+      operationId: listMedia
+      summary: List media
+      description: Retrieve a paginated collection of AeroFarms media attachments. 5,605 attachments at capture.
+      tags:
+      - Media
+      responses:
+        '200':
+          description: List media
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MediaItem'
+          headers:
+            X-WP-Total:
+              description: Total number of records matching the query.
+              schema:
+                type: integer
+            X-WP-TotalPages:
+              description: Total number of pages available at the current per_page.
+              schema:
+                type: integer
+            Link:
+              description: RFC 8288 pagination links (rel="next" / rel="prev").
+              schema:
+                type: string
+        '400':
+          description: Invalid parameter(s) — rest_invalid_param.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: No such route or resource — rest_no_route / rest_*_invalid_id.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      parameters:
+      - name: after
+        in: query
+        schema:
+          type: string
+          format: date-time
+        description: Limit response to posts published after a given ISO8601 compliant date.
+      - name: author
+        in: query
+        schema:
+          type: array
+          default: []
+          items:
+            type: integer
+        description: Limit result set to posts assigned to specific authors.
+      - name: author_exclude
+        in: query
+        schema:
+          type: array
+          default: []
+          items:
+            type: integer
+        description: Ensure result set excludes posts assigned to specific authors.
+      - name: before
+        in: query
+        schema:
+          type: string
+          format: date-time
+        description: Limit response to posts published before a given ISO8601 compliant date.
+      - name: context
+        in: query
+        schema:
+          type: string
+          enum:
+          - view
+          - embed
+          - edit
+          default: view
+        description: Scope under which the request is made; determines fields present in response.
+      - name: exclude
+        in: query
+        schema:
+          type: array
+          default: []
+          items:
+            type: integer
+        description: Ensure result set excludes specific IDs.
+      - name: include
+        in: query
+        schema:
+          type: array
+          default: []
+          items:
+            type: integer
+        description: Limit result set to specific IDs.
+      - name: media_type
+        in: query
+        schema:
+          type: array
+          default: null
+          items:
+            type: string
+            enum:
+            - image
+            - video
+            - text
+            - application
+            - audio
+        description: Limit result set to attachments of a particular media type or media types.
+      - name: mime_type
+        in: query
+        schema:
+          type: array
+          default: null
+          items:
+            type: string
+        description: Limit result set to attachments of a particular MIME type or MIME types.
+      - name: modified_after
+        in: query
+        schema:
+          type: string
+          format: date-time
+        description: Limit response to posts modified after a given ISO8601 compliant date.
+      - name: modified_before
+        in: query
+        schema:
+          type: string
+          format: date-time
+        description: Limit response to posts modified before a given ISO8601 compliant date.
+      - name: offset
+        in: query
+        schema:
+          type: integer
+        description: Offset the result set by a specific number of items.
+      - name: order
+        in: query
+        schema:
+          type: string
+          enum:
+          - asc
+          - desc
+          default: desc
+        description: Order sort attribute ascending or descending.
+      - name: orderby
+        in: query
+        schema:
+          type: string
+          enum:
+          - author
+          - date
+          - id
+          - include
+          - modified
+          - parent
+          - relevance
+          - slug
+          - include_slugs
+          - title
+          default: date
+        description: Sort collection by post attribute.
+      - name: page
+        in: query
+        schema:
+          type: integer
+          default: 1
+          minimum: 1
+        description: Current page of the collection.
+      - name: parent
+        in: query
+        schema:
+          type: array
+          default: []
+          items:
+            type: integer
+        description: Limit result set to items with particular parent IDs.
+      - name: parent_exclude
+        in: query
+        schema:
+          type: array
+          default: []
+          items:
+            type: integer
+        description: Limit result set to all items except those of a particular parent ID.
+      - name: per_page
+        in: query
+        schema:
+          type: integer
+          default: 10
+          minimum: 1
+          maximum: 100
+        description: Maximum number of items to be returned in result set.
+      - name: search
+        in: query
+        schema:
+          type: string
+        description: Limit results to those matching a string.
+      - name: search_columns
+        in: query
+        schema:
+          type: array
+          default: []
+          items:
+            enum:
+            - post_title
+            - post_content
+            - post_excerpt
+            type: string
+        description: Array of column names to be searched.
+      - name: search_semantics
+        in: query
+        schema:
+          type: string
+          enum:
+          - exact
+        description: How to interpret the search input.
+      - name: slug
+        in: query
+        schema:
+          type: array
+          items:
+            type: string
+        description: Limit result set to posts with one or more specific slugs.
+      - name: status
+        in: query
+        schema:
+          type: array
+          default: inherit
+          items:
+            enum:
+            - inherit
+            - private
+            - trash
+            type: string
+        description: Limit result set to posts assigned one or more statuses.
+components:
+  schemas:
+    Error:
+      title: WP REST error
+      type: object
+      description: The WordPress REST error envelope returned on every non-2xx response, observed live 2026-09-10.
+      properties:
+        code:
+          type: string
+          description: Machine-readable error code, e.g. rest_forbidden, rest_no_route, rest_invalid_param.
+        message:
+          type: string
+          description: Human-readable message.
+        data:
+          type: object
+          properties:
+            status:
+              type: integer
+              description: HTTP status code repeated in the body.
+            params:
+              type: object
+              description: Per-parameter validation messages, on rest_invalid_param.
+    MediaItem:
+      title: attachment
+      type: object
+      properties:
+        date:
+          description: The date the post was published, in the site's timezone.
+          type:
+          - string
+          - 'null'
+          format: date-time
+        date_gmt:
+          description: The date the post was published, as GMT.
+          type:
+          - string
+          - 'null'
+          format: date-time
+        guid:
+          description: The globally unique identifier for the post.
+          type: object
+          properties:
+            raw:
+              description: GUID for the post, as it exists in the database.
+              type: string
+            rendered:
+              description: GUID for the post, transformed for display.
+              type: string
+        id:
+          description: Unique identifier for the post.
+          type: integer
+        link:
+          description: URL to the post.
+          type: string
+          format: uri
+        modified:
+          description: The date the post was last modified, in the site's timezone.
+          type: string
+          format: date-time
+        modified_gmt:
+          description: The date the post was last modified, as GMT.
+          type: string
+          format: date-time
+        slug:
+          description: An alphanumeric identifier for the post unique to its type.
+          type: string
+        status:
+          description: A named status for the post.
+          type: string
+          enum:
+          - publish
+          - future
+          - draft
+          - pending
+          - private
+          - acf-disabled
+          - wc-pending
+          - wc-processing
+          - wc-on-hold
+          - wc-completed
+          - wc-cancelled
+          - wc-refunded
+          - wc-failed
+          - wc-checkout-draft
+          - hidden
+        type:
+          description: Type of post.
+          type: string
+        permalink_template:
+          description: Permalink template for the post.
+          type: string
+        generated_slug:
+          description: Slug automatically generated from the post title.
+          type: string
+        class_list:
+          description: An array of the class names for the post container element.
+          type: array
+          items:
+            type: string
+        title:
+          description: The title for the post.
+          type: object
+          properties:
+            raw:
+              description: Title for the post, as it exists in the database.
+              type: string
+            rendered:
+              description: HTML title for the post, transformed for display.
+              type: string
+        author:
+          description: The ID for the author of the post.
+          type: integer
+        featured_media:
+          description: The ID of the featured media for the post.
+          type: integer
+        comment_status:
+          description: Whether or not comments are open on the post.
+          type: string
+          enum:
+          - open
+          - closed
+        ping_status:
+          description: Whether or not the post can be pinged.
+          type: string
+          enum:
+          - open
+          - closed
+        meta:
+          description: Meta fields.
+          type: object
+          properties:
+            _acf_changed:
+              type: boolean
+              title: ''
+              description: ''
+              default: false
+            _uag_custom_page_level_css:
+              type: string
+              title: ''
+              description: ''
+              default: ''
+            site-sidebar-layout:
+              type: string
+              title: ''
+              description: ''
+              default: default
+            site-content-layout:
+              type: string
+              title: ''
+              description: ''
+              default: ''
+            ast-site-content-layout:
+              type: string
+              title: ''
+              description: ''
+              default: default
+            site-content-style:
+              type: string
+              title: ''
+              description: ''
+              default: default
+            site-sidebar-style:
+              type: string
+              title: ''
+              description: ''
+              default: default
+            ast-global-header-display:
+              type: string
+              title: ''
+              description: ''
+              default: ''
+            ast-banner-title-visibility:
+              type: string
+              title: ''
+              description: ''
+              default: ''
+            ast-main-header-display:
+              type: string
+              title: ''
+              description: ''
+              default: ''
+            ast-hfb-above-header-display:
+              type: string
+              title: ''
+              description: ''
+              default: ''
+            ast-hfb-below-header-display:
+              type: string
+              title: ''
+              description: ''
+              default: ''
+            ast-hfb-mobile-header-display:
+              type: string
+              title: ''
+              description: ''
+              default: ''
+            site-post-title:
+              type: string
+              title: ''
+              description: ''
+              default: ''
+            ast-breadcrumbs-content:
+              type: string
+              title: ''
+              description: ''
+              default: ''
+            ast-featured-img:
+              type: string
+              title: ''
+              description: ''
+              default: ''
+            footer-sml-layout:
+              type: string
+              title: ''
+              description: ''
+              default: ''
+            ast-disable-related-posts:
+              type: string
+              title: ''
+              description: ''
+              default: ''
+            theme-transparent-header-meta:
+              type: string
+              title: ''
+              description: ''
+              default: ''
+            adv-header-id-meta:
+              type: string
+              title: ''
+              description: ''
+              default: ''
+            stick-header-meta:
+              type: string
+              title: ''
+              description: ''
+              default: ''
+            header-above-stick-meta:
+              type: string
+              title: ''
+              description: ''
+              default: ''
+            header-main-stick-meta:
+              type: string
+              title: ''
+              description: ''
+              default: ''
+            header-below-stick-meta:
+              type: string
+              title: ''
+              description: ''
+              default: ''
+            astra-migrate-meta-layouts:
+              type: string
+              title: ''
+              description: ''
+              default: default
+            ast-page-background-enabled:
+              type: string
+              title: ''
+              description: ''
+              default: default
+            ast-page-background-meta:
+              type: object
+              title: ''
+              description: ''
+              default:
+                desktop:
+                  background-color: ''
+                  background-image: ''
+                  background-repeat: repeat
+                  background-position: center center
+                  background-size: auto
+                  background-attachment: scroll
+                  background-type: ''
+                  background-media: ''
+                  overlay-type: ''
+                  overlay-color: ''
+                  overlay-opacity: ''
+                  overlay-gradient: ''
+                tablet:
+                  background-color: ''
+                  background-image: ''
+                  background-repeat: repeat
+                  background-position: center center
+                  background-size: auto
+                  background-attachment: scroll
+                  background-type: ''
+                  background-media: ''
+                  overlay-type: ''
+                  overlay-color: ''
+                  overlay-opacity: ''
+                  overlay-gradient: ''
+                mobile:
+                  background-color: ''
+                  background-image: ''
+                  background-repeat: repeat
+                  background-position: center center
+                  background-size: auto
+                  background-attachment: scroll
+                  background-type: ''
+                  background-media: ''
+                  overlay-type: ''
+                  overlay-color: ''
+                  overlay-opacity: ''
+                  overlay-gradient: ''
+              properties:
+                desktop:
+                  type: object
+                  properties:
+                    background-color:
+                      type: string
+                    background-image:
+                      type: string
+                    background-repeat:
+                      type: string
+                    background-position:
+                      type: string
+                    background-size:
+                      type: string
+                    background-attachment:
+                      type: string
+                    background-type:
+                      type: string
+                    background-media:
+                      type: string
+                    overlay-type:
+                      type: string
+                    overlay-color:
+                      type: string
+                    overlay-opacity:
+                      type: string
+                    overlay-gradient:
+                      type: string
+                  additionalProperties: false
+                tablet:
+                  type: object
+                  properties:
+                    background-color:
+                      type: string
+                    background-image:
+                      type: string
+                    background-repeat:
+                      type: string
+                    background-position:
+                      type: string
+                    background-size:
+                      type: string
+                    background-attachment:
+                      type: string
+                    background-type:
+                      type: string
+                    background-media:
+                      type: string
+                    overlay-type:
+                      type: string
+                    overlay-color:
+                      type: string
+                    overlay-opacity:
+                      type: string
+                    overlay-gradient:
+                      type: string
+                  additionalProperties: false
+                mobile:
+                  type: object
+                  properties:
+                    background-color:
+                      type: string
+                    background-image:
+                      type: string
+                    background-repeat:
+                      type: string
+                    background-position:
+                      type: string
+                    background-size:
+                      type: string
+                    background-attachment:
+                      type: string
+                    background-type:
+                      type: string
+                    background-media:
+                      type: string
+                    overlay-type:
+                      type: string
+                    overlay-color:
+                      type: string
+                    overlay-opacity:
+                      type: string
+                    overlay-gradient:
+                      type: string
+                  additionalProperties: false
+              additionalProperties: false
+            ast-content-background-meta:
+              type: object
+              title: ''
+              description: ''
+              default:
+                desktop:
+                  background-color: var(--ast-global-color-5)
+                  background-image: ''
+                  background-repeat: repeat
+                  background-position: center center
+                  background-size: auto
+                  background-attachment: scroll
+                  background-type: ''
+                  background-media: ''
+                  overlay-type: ''
+                  overlay-color: ''
+                  overlay-opacity: ''
+                  overlay-gradient: ''
+                tablet:
+                  background-color: var(--ast-global-color-5)
+                  background-image: ''
+                  background-repeat: repeat
+                  background-position: center center
+                  background-size: auto
+                  background-attachment: scroll
+                  background-type: ''
+                  background-media: ''
+                  overlay-type: ''
+                  overlay-color: ''
+                  overlay-opacity: ''
+                  overlay-gradient: ''
+                mobile:
+                  background-color: var(--ast-global-color-5)
+                  background-image: ''
+                  background-repeat: repeat
+                  background-position: center center
+                  background-size: auto
+                  background-attachment: scroll
+                  background-type: ''
+                  background-media: ''
+                  overlay-type: ''
+                  overlay-color: ''
+                  overlay-opacity: ''
+                  overlay-gradient: ''
+              properties:
+                desktop:
+                  type: object
+                  properties:
+                    background-color:
+                      type: string
+                    background-image:
+                      type: string
+                    background-repeat:
+                      type: string
+                    background-position:
+                      type: string
+                    background-size:
+                      type: string
+                    background-attachment:
+                      type: string
+                    background-type:
+                      type: string
+                    background-media:
+                      type: string
+                    overlay-type:
+                      type: string
+                    overlay-color:
+                      type: string
+                    overlay-opacity:
+                      type: string
+                    overlay-gradient:
+                      type: string
+                  additionalProperties: false
+                tablet:
+                  type: object
+                  properties:
+                    background-color:
+                      type: string
+                    background-image:
+                      type: string
+                    background-repeat:
+                      type: string
+                    background-position:
+                      type: string
+                    background-size:
+                      type: string
+                    background-attachment:
+                      type: string
+                    background-type:
+                      type: string
+                    background-media:
+                      type: string
+                    overlay-type:
+                      type: string
+                    overlay-color:
+                      type: string
+                    overlay-opacity:
+                      type: string
+                    overlay-gradient:
+                      type: string
+                  additionalProperties: false
+                mobile:
+                  type: object
+                  properties:
+                    background-color:
+                      type: string
+                    background-image:
+                      type: string
+                    background-repeat:
+                      type: string
+                    background-position:
+                      type: string
+                    background-size:
+                      type: string
+                    background-attachment:
+                      type: string
+                    background-type:
+                      type: string
+                    background-media:
+                      type: string
+                    overlay-type:
+                      type: string
+                    overlay-color:
+                      type: string
+                    overlay-opacity:
+                      type: string
+                    overlay-gradient:
+                      type: string
+                  additionalProperties: false
+              additionalProperties: false
+        template:
+          description: The theme file to use to display the post.
+          type: string
+        acf:
+          description: ACF field data
+          type: object
+          properties: []
+        alt_text:
+          description: Alternative text to display when attachment is not displayed.
+          type: string
+        caption:
+          description: The attachment caption.
+          type: object
+          properties:
+            raw:
+              description: Caption for the attachment, as it exists in the database.
+              type: string
+            rendered:
+              description: HTML caption for the attachment, transformed for display.
+              type: string
+        description:
+          description: The attachment description.
+          type: object
+          properties:
+            raw:
+              description: Description for the attachment, as it exists in the database.
+              type: string
+            rendered:
+              description: HTML description for the attachment, transformed for display.
+              type: string
+        media_type:
+          description: Attachment type.
+          type: string
+          enum:
+          - image
+          - file
+        mime_type:
+          description: The attachment MIME type.
+          type: string
+        media_details:
+          description: Details about the media file, specific to its type.
+          type: object
+        post:
+          description: The ID for the associated post of the attachment.
+          type: integer
+        source_url:
+          description: URL to the original attachment file.
+          type: string
+          format: uri
+        missing_image_sizes:
+          description: List of the missing image sizes of the attachment.
+          type: array
+          items:
+            type: string
+        filename:
+          description: Original attachment file name.
+          type: string
+        filesize:
+          description: Attachment file size in bytes.
+          type: integer
+        exif_orientation:
+          description: EXIF orientation value. Values 1-8 follow the EXIF specification, where 1 means no rotation needed.
+          type: integer

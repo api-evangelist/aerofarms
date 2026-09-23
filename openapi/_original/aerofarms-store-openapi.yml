@@ -1,3 +1,5 @@
+# x-archived-from: aerofarms-store-openapi.yml
+# x-archived-on: 2026-09-16
 openapi: 3.2.0
 info:
   title: AeroFarms Store API
