@@ -64,48 +64,116 @@
 > Full detail: **[Where this data comes from](https://apievangelist.com/about/where-our-data-comes-from)**
 <!-- API-EVANGELIST-PROVENANCE:END -->
 
-AeroFarms is an indoor vertical farming company founded in 2004 and headquartered in Newark, New
-Jersey. It grows leafy greens and nutrient-dense microgreens — micro broccoli, micro arugula, micro
-wasabi mustard and the FlavorSpectrum blends — aeroponically, without sun or soil, under LED light
-recipes driven by its proprietary agSTACK PLC/SCADA control stack. It is a Certified B Corporation
-and was acquired by an affiliate of Palm Ventures in June 2026.
+AeroFarms is an indoor vertical farming company founded in 2004 and headquartered in Newark, New Jersey, where it grows leafy greens and nutrient-dense microgreens — micro broccoli, micro arugula, micro wasabi mustard and the FlavorSpectrum blends — aeroponically, without sun or soil, under LED light recipes driven by its proprietary agSTACK PLC/SCADA control stack. It sells through US grocery retail rather than through software, is a Certified B Corporation, and was acquired by an affiliate of Palm Ventures in June 2026. AeroFarms is a produce grower, not a software vendor: no developer portal, no API documentation, no SDKs, no API product. The machine-readable surface profiled here is the anonymous, read-only WordPress and WooCommerce REST API behind www.aerofarms.com, a live OAuth-protected MCP server at /wp-json/mcp/mcp-oauth-server, and a published llms.txt.
 
-## What this profile found
+**Areas:** Company · Agriculture · Vertical Farming · Indoor Farming · AgTech · Food and Beverage · Consumer Packaged Goods · Microgreens · Sustainability · Content · Commerce · MCP
 
-AeroFarms is a produce grower, not a software vendor. It publishes **no developer portal, no API
-documentation, no SDKs, no pricing and no API product**, and its GitHub organization
-([AeroFarms](https://github.com/AeroFarms)) has zero public repositories. `api.aerofarms.com`,
-`docs.aerofarms.com`, `developers.aerofarms.com` and `status.aerofarms.com` are all NXDOMAIN.
+## AeroFarms on APIs.io
 
-It nevertheless has a real, live, machine-readable surface, and it is more interesting than that
-summary suggests:
+Everything profiled for AeroFarms is published on APIs.io rather than in this repository. Start at the provider page — **[apis.io/providers/aerofarms/](https://apis.io/providers/aerofarms/)** — or go straight to one of the APIs or properties below.
 
-- **A hosted MCP server.** `https://www.aerofarms.com/wp-json/mcp/mcp-oauth-server` answers JSON-RPC
-  and defends itself with a textbook OAuth 2.1 challenge — RFC 9728 protected-resource metadata named
-  in `WWW-Authenticate`, RFC 8414 authorization-server metadata served at the canonical path, PKCE
-  S256 required, public clients via client_id metadata documents, one scope (`mcp`). `tools/list`
-  returns 401, so the tool set is not enumerated here and no candidate list is invented for it.
-- **An anonymous, read-only REST API** — 917 registered routes across 46 namespaces, of which the
-  publicly readable part covers 289 news posts, 56 pages, 8 microgreens products, 18 FAQ answers,
-  5,605 media attachments, 455 tags and a cross-content search index of 371 objects.
-- **A provider-published `llms.txt`** (Yoast-generated), saved verbatim in `llms/`.
+### APIs (2)
 
-## What is in this repository
+- [AeroFarms MCP Server](https://apis.io/apis/aerofarms/aerofarms-mcp-server/) — A live Model Context Protocol server served from www.aerofarms.com at /wp-json/mcp/mcp-oauth-server. It answers JSON-RPC over HTTP and is protected by OAuth…
+- [AeroFarms Website (WordPress REST)](https://apis.io/apis/aerofarms/aerofarms-com-website-wordpress-rest/) — The public WordPress REST API (wp-json) of the AeroFarms website at www.aerofarms.com: the route index of the site's content management system, catalogued…
 
-Nine OpenAPI documents in `openapi/` (25 operations) derived from the site's **own** published route
-index and per-route `OPTIONS` schema documents — AeroFarms publishes no OpenAPI, and nothing in them
-is invented. Alongside them: `mcp/`, `well-known/` (two real OAuth discovery documents, saved
-verbatim), `authentication/`, `scopes/`, `conformance/`, `conventions/`, `errors/`, `lifecycle/`,
-`data-model/`, `plans/`, `rate-limits/`, `security/`, `overlays/`, `llms/` and three packaged agent
-skills in `skills/`.
+### Published properties
 
-Three findings a consumer should read before calling anything:
+Each property below is a page on APIs.io carrying the machine-readable artifact and what it says.
 
-1. `/wp-json/wp/v2/media/{id}` is captured by a site redirect rule and answers **HTTP 200 with an
-   HTML marketing page** instead of the attachment. Assert `Content-Type` on every response.
-2. WooCommerce runs here as a catalog, not a shop: every product returns a price of `0` in an
-   unconfigured `GBP` default currency. Do not read it as a price list.
-3. Nothing on this surface is committed to. It exists as a by-product of running a WordPress site,
-   so it can change on any plugin update, with no changelog and no channel to announce it on.
+#### MCP servers (1)
 
-- https://www.aerofarms.com/
+Model Context Protocol servers that expose the API to agents.
+
+- [mcp-oauth-server](https://apis.io/servers/aerofarms/mcp-oauth-server/)
+
+#### Security (2)
+
+Authentication, trust centre, and vulnerability disclosure.
+
+- [Aerofarms Authentication](https://apis.io/security/aerofarms/aerofarms-authentication/)
+- [Aerofarms Domain Security](https://apis.io/security/aerofarms/aerofarms-domain-security/)
+
+#### OAuth scopes (1)
+
+The permissions the API asks for.
+
+- [Aerofarms Scopes](https://apis.io/scopes/aerofarms/aerofarms-scopes/)
+
+#### Plans and pricing (1)
+
+Published plans, tiers and prices.
+
+- [Aerofarms Plans Pricing](https://apis.io/plans/aerofarms/aerofarms-plans-pricing/)
+
+#### Rate limits (1)
+
+Published request limits.
+
+- [Aerofarms Rate Limits](https://apis.io/rate-limits/aerofarms/aerofarms-rate-limits/)
+
+## Where to find this API
+
+Links to the company's own pages. This repository publishes no copy of their specifications — the canonical document is theirs and lives at the URLs below.
+
+- [Website](https://www.aerofarms.com/)
+- [Support](https://www.aerofarms.com/contact/)
+- [Blog](https://www.aerofarms.com/news/)
+- [Terms of service](https://www.aerofarms.com/terms-and-conditions/)
+- [Privacy policy](https://www.aerofarms.com/privacy-policy/)
+- [GitHub](https://github.com/AeroFarms)
+
+## API Evangelist rating
+
+**Kin Score 22.9** — emerging · rubric 0.25.0 · scored 2026-10-23
+
+| Facet | Score |
+|---|---|
+| Discoverability | 71.7 |
+| Contract quality | 0.0 |
+| Contract governance | 18.2 |
+| Operational transparency | 2.6 |
+| Developer ergonomics | 30.4 |
+| Access clarity | 21.1 |
+
+**Agent readiness 22.8** — agent-aware
+
+| Agent-readiness dimension | Result |
+|---|---|
+| Spec Presence | — |
+| Agentic Access | — |
+| Reversibility Documented | — |
+| MCP Server | platform (partial credit) |
+| Auth Clarity | served (partial credit) |
+| Idempotency | — |
+| Error Semantics | documented (partial credit) |
+| OpenAPI Examples | — |
+| Rate Limit Signal | documented (partial credit) |
+| Event Surface Described | — |
+| Agent Skills | derived (partial credit) |
+| Well Known Catalog | — |
+| Consent Identity | — |
+| Agent Card | — |
+| Dry Run Mode | — |
+| Delegated Identity | served (partial credit) |
+| Protected Resource Metadata | verified |
+| Dynamic Client Registration | — |
+| Agentic Commerce | — |
+| Pagination Ratio | na |
+| Operation Distinctiveness | na |
+
+**Regulatory alignment 34.3** — Horizontal (data, software, accessibility, platform)
+
+The rubric is published at [github.com/api-evangelist/kin-score](https://github.com/api-evangelist/kin-score). The per-check breakdown behind these numbers — which checks were earned, partial or missed — along with score history and how this provider compares to its peers, is available at [apis.io/providers/aerofarms/](https://apis.io/providers/aerofarms/).
+
+## How this profile is made
+
+API Evangelist profiles a company's public API surface the way a developer would find it: the website, developer portal and documentation, the specifications it publishes, its public repositories, and its pricing, status and changelog pages. From that it derives the properties above — contracts split per API, workflows, schemas, collections, governance rules, plans and rate limits — and scores them against the published [Kin Score rubric](https://github.com/api-evangelist/kin-score).
+
+The artifacts are published on [APIs.io](https://apis.io), not in this repository. This repository is the public record for AeroFarms: the place to say something is wrong, missing or out of date, and to ask for a re-score or a removal.
+
+## Open an issue
+
+- **Something about this listing** — a wrong description, a missing API, a stale artifact or a question about the rating: [open an issue on this repository](https://github.com/api-evangelist/aerofarms/issues/new).
+- **A new API, or one that is not in the catalog yet** — [submit it on APIs.io](https://apis.io/add/).
+- **Anything else** — [the APIs.io inbox](https://github.com/api-search/inbox/issues/new) or [info@apievangelist.com](mailto:info@apievangelist.com).
