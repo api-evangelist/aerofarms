@@ -91,26 +91,26 @@ Model Context Protocol servers that expose the API to agents.
 
 Authentication, trust centre, and vulnerability disclosure.
 
-- [Aerofarms Authentication](https://apis.io/security/aerofarms/aerofarms-authentication/)
-- [Aerofarms Domain Security](https://apis.io/security/aerofarms/aerofarms-domain-security/)
+- [AeroFarms Authentication](https://apis.io/security/aerofarms/aerofarms-authentication/)
+- [AeroFarms Domain Security](https://apis.io/security/aerofarms/aerofarms-domain-security/)
 
 #### OAuth scopes (1)
 
 The permissions the API asks for.
 
-- [Aerofarms Scopes](https://apis.io/scopes/aerofarms/aerofarms-scopes/)
+- [AeroFarms Scopes](https://apis.io/scopes/aerofarms/aerofarms-scopes/)
 
 #### Plans and pricing (1)
 
 Published plans, tiers and prices.
 
-- [Aerofarms Plans Pricing](https://apis.io/plans/aerofarms/aerofarms-plans-pricing/)
+- [AeroFarms Plans Pricing](https://apis.io/plans/aerofarms/aerofarms-plans-pricing/)
 
 #### Rate limits (1)
 
 Published request limits.
 
-- [Aerofarms Rate Limits](https://apis.io/rate-limits/aerofarms/aerofarms-rate-limits/)
+- [AeroFarms Rate Limits](https://apis.io/rate-limits/aerofarms/aerofarms-rate-limits/)
 
 ## Where to find this API
 
@@ -125,18 +125,18 @@ Links to the company's own pages. This repository publishes no copy of their spe
 
 ## API Evangelist rating
 
-**Kin Score 22.9** — emerging · rubric 0.25.0 · scored 2026-10-23
+**Kin Score 24.0** — emerging · rubric 0.28.1 · scored 2026-11-21
 
 | Facet | Score |
 |---|---|
 | Discoverability | 71.7 |
 | Contract quality | 0.0 |
 | Contract governance | 18.2 |
-| Operational transparency | 2.6 |
+| Operational transparency | 4.8 |
 | Developer ergonomics | 30.4 |
-| Access clarity | 21.1 |
+| Access clarity | 29.8 |
 
-**Agent readiness 22.8** — agent-aware
+**Agent readiness 26.6** — agent-aware
 
 | Agent-readiness dimension | Result |
 |---|---|
@@ -157,12 +157,16 @@ Links to the company's own pages. This repository publishes no copy of their spe
 | Dry Run Mode | — |
 | Delegated Identity | served (partial credit) |
 | Protected Resource Metadata | verified |
-| Dynamic Client Registration | — |
+| Dynamic Client Registration | yes |
 | Agentic Commerce | — |
 | Pagination Ratio | na |
 | Operation Distinctiveness | na |
+| MCP Tool Quality | na |
+| Onboarding Descriptor | — |
+| Dns Aid Index | na |
+| Markdown Negotiation | na |
 
-**Regulatory alignment 34.3** — Horizontal (data, software, accessibility, platform)
+**Regulatory alignment 28.4** — Horizontal (data, software, accessibility, platform)
 
 The rubric is published at [github.com/api-evangelist/kin-score](https://github.com/api-evangelist/kin-score). The per-check breakdown behind these numbers — which checks were earned, partial or missed — along with score history and how this provider compares to its peers, is available at [apis.io/providers/aerofarms/](https://apis.io/providers/aerofarms/).
 
